@@ -2,9 +2,16 @@
 
 React based website backed by Firebase database to manage the clients and their inventory monitoring settings.
 
-![image](https://user-images.githubusercontent.com/2355438/235330489-10ffd609-eb55-4dd1-bc58-a194993b72fe.png)
+![logo](https://user-images.githubusercontent.com/2355438/235367406-de28a385-98d8-4d11-9438-df73ea5da651.png)
 
 The server side is located at: https://github.com/droneshire/whiskey_inventory_alert_upwork
+
+# Dashboard
+The dashboard contains several views, one of which is an admin only view:
+
+- Admin - manage all clients' inventory preferences
+- Inventory - add inventory to track and manage alert inventory change threshold
+- Preferences - manage contact info and alert preferences
 
 # Models
 
