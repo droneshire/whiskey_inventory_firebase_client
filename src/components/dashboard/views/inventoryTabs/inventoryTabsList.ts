@@ -1,11 +1,11 @@
 import ItemsInventoryTab from "./ItemsInventoryTab";
 
-const strategyTabsList = [
+const inventoryTabsList = [
   {
     key: "items",
-    label: "Items",
+    label: "Inventory",
     component: ItemsInventoryTab,
   },
 ];
 
-export default strategyTabsList;
+export default inventoryTabsList;

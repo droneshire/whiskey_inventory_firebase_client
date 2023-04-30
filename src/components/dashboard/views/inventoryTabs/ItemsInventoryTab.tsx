@@ -294,7 +294,7 @@ const NewItemModal: FC<ItemModalProps> = ({
   );
 };
 
-const ReinforcementsStrategyTab: FC<{
+const ItemsInventoryTab: FC<{
   userConfigSnapshot: DocumentSnapshot<UserConfig>;
 }> = ({ userConfigSnapshot }) => {
   const inventory = userConfigSnapshot?.data()?.inventory;
@@ -376,26 +376,6 @@ const ReinforcementsStrategyTab: FC<{
             sx={{ maxWidth: 300 }}
           />
         </FormGroup>
-        <ItemActivityGroup
-          items={miningItems}
-          actionButtons={[
-            {
-              doAction: changeToTracking,
-              title: (itemId: string) => `Change item ${itemId} to tracking`,
-              ActionIcon: TrackingIcon,
-            },
-            {
-              doAction: inactivateItem,
-              title: (itemId: string) => `Inactivate item ${itemId}`,
-              ActionIcon: DoDisturbIcon,
-            },
-            {
-              doAction: deleteItem,
-              title: (itemId: string) => `Delete item ${itemId}`,
-              ActionIcon: DeleteIcon,
-            },
-          ]}
-        />
         <Box
           sx={{
             display: "flex",
@@ -477,4 +457,4 @@ const ReinforcementsStrategyTab: FC<{
   );
 };
 
-export default ReinforcementsStrategyTab;
+export default ItemsInventoryTab;
