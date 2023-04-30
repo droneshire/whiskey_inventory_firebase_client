@@ -9,15 +9,7 @@ const Copyright: FC<any> = (props: any) => {
       align="center"
       {...props}
     >
-      {"Copyright © "}
-      <Link
-        color="inherit"
-        component="a"
-        target="_blank"
-        href="https://engineeredcashflow.com/"
-      >
-        Joshua Tilden
-      </Link>{" "}
+      {"Copyright © Joshua Tilton "}
       {new Date().getFullYear()}
       {"."}
     </Typography>
