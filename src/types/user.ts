@@ -1,6 +1,6 @@
 export enum ItemAction {
   TRACKING = "TRACKING",
-  INACTIVE = "INACTIVE",
+  UNTRACKED = "UNTRACKED",
 }
 
 export interface Inventory {

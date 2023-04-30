@@ -42,7 +42,7 @@ const DashboardPage: FC<DashboardProps> = ({ user }) => {
     return doc(
       collection(
         getFirestore(myApp),
-        "users"
+        "clients"
       ) as CollectionReference<UserConfig>,
       user?.email ?? ""
     );

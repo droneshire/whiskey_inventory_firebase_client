@@ -30,8 +30,8 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
-import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
 import DoDisturbIcon from "@mui/icons-material/DoDisturb";
+import LocalBarIcon from '@mui/icons-material/LocalBar';
 import { Inventory, ItemAction, UserConfig } from "types/user";
 import { Box } from "@mui/system";
 import {
@@ -39,8 +39,7 @@ import {
   FontAwesomeIconProps,
 } from "@fortawesome/react-fontawesome";
 import {
-  faPersonDigging,
-  faSackDollar,
+  faChartSimple,
 } from "@fortawesome/free-solid-svg-icons";
 
 import { capitalizeFirstLetter } from "utils/string";
@@ -58,11 +57,8 @@ import {
 } from "firebase/firestore";
 import { useKeyPress } from "hooks/events";
 
-const LootingIcon: FC<Omit<FontAwesomeIconProps, "icon">> = (props) => (
-  <FontAwesomeIcon icon={faSackDollar} {...props} />
-);
-const MiningIcon: FC<Omit<FontAwesomeIconProps, "icon">> = (props) => (
-  <FontAwesomeIcon icon={faPersonDigging} {...props} />
+const TrackingIcon: FC<Omit<FontAwesomeIconProps, "icon">> = (props) => (
+  <FontAwesomeIcon icon={faChartSimple} {...props} />
 );
 
 type ItemSpec = Inventory["items"][string] & {
@@ -92,7 +88,7 @@ const Item: FC<ItemProps> = ({ itemId, actionButtons }) => {
     <TableRow hover>
       <TableCell>
         <Tooltip title={`Item ${itemId}`}>
-          <Chip icon={<ElectricBoltIcon />} label={itemId} variant="outlined" />
+          <Chip icon={<LocalBarIcon />} label={itemId} variant="outlined" />
         </Tooltip>
       </TableCell>
       <TableCell sx={{ textAlign: "right" }}>
@@ -262,9 +258,9 @@ const NewItemModal: FC<ItemModalProps> = ({
                 label={capitalizeFirstLetter(ItemAction.TRACKING.toLowerCase())}
               />
               <FormControlLabel
-                value={ItemAction.INACTIVE}
+                value={ItemAction.UNTRACKED}
                 control={<Radio />}
-                label={capitalizeFirstLetter(ItemAction.INACTIVE.toLowerCase())}
+                label={capitalizeFirstLetter(ItemAction.UNTRACKED.toLowerCase())}
               />
             </RadioGroup>
           </FormControl>
@@ -324,7 +320,7 @@ const ReinforcementsStrategyTab: FC<{
       case "TRACKING":
         trackingItems.push({ itemId, ...item });
         break;
-      case ItemAction.INACTIVE:
+      case ItemAction.UNTRACKED:
         inactiveItems.push({ itemId, ...item });
         break;
       default:
@@ -352,7 +348,7 @@ const ReinforcementsStrategyTab: FC<{
   };
 
   const inactivateItem = (itemId: string) => {
-    changeItemAction(itemId, ItemAction.INACTIVE);
+    changeItemAction(itemId, ItemAction.UNTRACKED);
   };
 
   return (
@@ -364,7 +360,7 @@ const ReinforcementsStrategyTab: FC<{
             disabled={updatingAnything}
             docSnap={userConfigSnapshot!}
             min={0}
-            max={100}
+            max={20}
             fieldPath="inventory.inventoryChange"
             valueLabelDisplay="auto"
             marks={[
@@ -373,33 +369,20 @@ const ReinforcementsStrategyTab: FC<{
                 label: "0",
               },
               {
-                value: 100,
-                label: "100",
+                value: 20,
+                label: "20",
               },
             ]}
             sx={{ maxWidth: 300 }}
           />
         </FormGroup>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "baseline",
-            gap: 2,
-          }}
-        >
-          <MiningIcon />
-          <Typography sx={{ mt: 4, mb: 2 }} variant="h6" component="div">
-            Items Tracked
-          </Typography>
-        </Box>
         <ItemActivityGroup
           items={miningItems}
           actionButtons={[
             {
               doAction: changeToTracking,
               title: (itemId: string) => `Change item ${itemId} to tracking`,
-              ActionIcon: LootingIcon,
+              ActionIcon: TrackingIcon,
             },
             {
               doAction: inactivateItem,
@@ -421,9 +404,9 @@ const ReinforcementsStrategyTab: FC<{
             gap: 2,
           }}
         >
-          <LootingIcon />
+          <TrackingIcon />
           <Typography sx={{ mt: 4, mb: 2 }} variant="h6" component="div">
-            Looting itemss
+            Items Tracked
           </Typography>
         </Box>
         <ItemActivityGroup
@@ -451,7 +434,7 @@ const ReinforcementsStrategyTab: FC<{
         >
           <DoDisturbIcon />
           <Typography sx={{ mt: 4, mb: 2 }} variant="h6" component="div">
-            Inactive Items
+            Untracked Items
           </Typography>
         </Box>
         <ItemActivityGroup
@@ -460,7 +443,7 @@ const ReinforcementsStrategyTab: FC<{
             {
               doAction: changeToTracking,
               title: (itemId: string) => `Change item ${itemId} to tracking`,
-              ActionIcon: LootingIcon,
+              ActionIcon: TrackingIcon,
             },
             {
               doAction: deleteItem,

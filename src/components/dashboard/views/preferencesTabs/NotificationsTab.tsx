@@ -79,7 +79,7 @@ const NotificationsTab: FC<{
               checkBox
             />
           }
-          label="Alert updates"
+          label="SMS updates"
         />
       </FormGroup>
     </>
