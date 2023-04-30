@@ -6,7 +6,7 @@ React based website backed by Firebase database to manage the clients and their 
 
 The server side is located at: https://github.com/droneshire/whiskey_inventory_alert_upwork
 
-# Models!
+# Models
 
 ### Client
 ```
