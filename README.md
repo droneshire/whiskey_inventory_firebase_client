@@ -11,6 +11,7 @@ The server side is located at: https://github.com/droneshire/whiskey_inventory_a
 - [firestore web reference](https://firebase.google.com/docs/reference/js/firestore_)
 - [mui icons](https://mui.com/material-ui/material-icons/)
 - [fort awesome icons](https://fontawesome.com/icons)
+- [react documentation](https://react.dev/learn)
 
 # Dashboard
 The dashboard contains several views, one of which is an admin only view:
