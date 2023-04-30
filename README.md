@@ -6,6 +6,12 @@ React based website backed by Firebase database to manage the clients and their 
 
 The server side is located at: https://github.com/droneshire/whiskey_inventory_alert_upwork
 
+### Useful References
+- [security rules](https://firebase.google.com/docs/firestore/security/overview)
+- [firestore web reference](https://firebase.google.com/docs/reference/js/firestore_)
+- [mui icons](https://mui.com/material-ui/material-icons/)
+- [fort awesome icons](https://fontawesome.com/icons)
+
 # Dashboard
 The dashboard contains several views, one of which is an admin only view:
 
