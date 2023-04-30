@@ -8,6 +8,7 @@ export interface Inventory {
     [id: string]: {
       // The current action for the team to perform
       action: ItemAction;
+      name: string;
     };
   };
   inventoryChange: number;

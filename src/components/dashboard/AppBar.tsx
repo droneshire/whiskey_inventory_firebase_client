@@ -84,7 +84,7 @@ const AppBar: FC<AppBarProps> = ({
           <MenuIcon />
         </IconButton>
         {/* <CurrencyExchangeIcon  sx={{ marginRight: "12px" }}/> */}
-        <Avatar src="/logo.png" sx={{ marginRight: "12px" }} />
+        <Avatar src="/logo.png" sx={{ marginRight: "12px" }} variant="square" />
         <Typography
           component="h1"
           variant="h6"

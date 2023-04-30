@@ -31,24 +31,18 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DoDisturbIcon from "@mui/icons-material/DoDisturb";
-import LocalBarIcon from '@mui/icons-material/LocalBar';
+import LocalBarIcon from "@mui/icons-material/LocalBar";
 import { Inventory, ItemAction, UserConfig } from "types/user";
 import { Box } from "@mui/system";
 import {
   FontAwesomeIcon,
   FontAwesomeIconProps,
 } from "@fortawesome/react-fontawesome";
-import {
-  faChartSimple,
-} from "@fortawesome/free-solid-svg-icons";
+import { faChartSimple } from "@fortawesome/free-solid-svg-icons";
 
 import { capitalizeFirstLetter } from "utils/string";
 import { useAsyncAction } from "hooks/async";
-import {
-  FirestoreBackedSlider,
-  FirestoreBackedSwitch,
-  IntegerInput,
-} from "components/utils/forms";
+import { FirestoreBackedSlider, IntegerInput } from "components/utils/forms";
 import {
   DocumentSnapshot,
   FieldPath,
@@ -74,7 +68,7 @@ interface ItemActionOption {
 type ItemProps = ItemSpec & {
   actionButtons: ItemActionOption[];
 };
-const Item: FC<ItemProps> = ({ itemId, actionButtons }) => {
+const Item: FC<ItemProps> = ({ itemId, name, actionButtons }) => {
   const [actionMenuAnchorEl, setActionMenuAnchorEl] =
     React.useState<null | HTMLElement>(null);
   const actionMenuOpen = Boolean(actionMenuAnchorEl);
@@ -91,6 +85,7 @@ const Item: FC<ItemProps> = ({ itemId, actionButtons }) => {
           <Chip icon={<LocalBarIcon />} label={itemId} variant="outlined" />
         </Tooltip>
       </TableCell>
+      <TableCell>{name}</TableCell>
       <TableCell sx={{ textAlign: "right" }}>
         <Button onClick={handleActionMenuClick}>Actions</Button>
         <Menu
@@ -161,6 +156,7 @@ const NewItemModal: FC<ItemModalProps> = ({
 }) => {
   const modalRef = useRef<HTMLElement>(null);
   const [itemId, setitemId] = useState("");
+  const [itemName, setitemName] = useState("");
   const [itemAction, setItemAction] = useState<ItemAction>(ItemAction.TRACKING);
   const {
     runAction: doCreateItem,
@@ -169,7 +165,9 @@ const NewItemModal: FC<ItemModalProps> = ({
     clearError,
   } = useAsyncAction(createItem);
 
-  const validitemId = itemId && !existingitemIds.includes(itemId);
+  // rewrite the line below except to also ensure item id is 5 string digits
+  const validitemId =
+    itemId && !existingitemIds.includes(itemId) && itemId.length === 5;
   const disabled = creatingItem || !validitemId;
 
   const reset = useCallback(() => {
@@ -183,6 +181,7 @@ const NewItemModal: FC<ItemModalProps> = ({
     }
     const success = await doCreateItem({
       itemId,
+      name: itemName,
       action: itemAction,
     });
     if (success) {
@@ -247,7 +246,8 @@ const NewItemModal: FC<ItemModalProps> = ({
               onChange={(e) =>
                 setItemAction(
                   ItemAction[
-                    e.target.value as typeof ItemAction[keyof typeof ItemAction]
+                    e.target
+                      .value as (typeof ItemAction)[keyof typeof ItemAction]
                   ]
                 )
               }
@@ -260,7 +260,9 @@ const NewItemModal: FC<ItemModalProps> = ({
               <FormControlLabel
                 value={ItemAction.UNTRACKED}
                 control={<Radio />}
-                label={capitalizeFirstLetter(ItemAction.UNTRACKED.toLowerCase())}
+                label={capitalizeFirstLetter(
+                  ItemAction.UNTRACKED.toLowerCase()
+                )}
               />
             </RadioGroup>
           </FormControl>

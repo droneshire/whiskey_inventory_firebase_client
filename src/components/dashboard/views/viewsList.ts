@@ -2,10 +2,8 @@ import React, { useMemo } from "react";
 
 import SettingsIcon from "@mui/icons-material/Settings";
 import BarChartIcon from "@mui/icons-material/BarChart";
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { SvgIconComponent } from "@mui/icons-material";
 
-import AdminView from "./AdminView";
 import InventoryView from "./InventoryView";
 import PreferencesView from "./PreferencesView";
 import { User } from "firebase/auth";
@@ -20,13 +18,6 @@ export interface DashbardViewSpec {
 }
 
 const viewsList: DashbardViewSpec[] = [
-  // {
-  //   key: "admin",
-  //   label: "Admin",
-  //   icon: AdminPanelSettingsIcon,
-  //   component: AdminView,
-  //   adminOnly: true,
-  // },
   {
     key: "inventory",
     label: "Inventory",
