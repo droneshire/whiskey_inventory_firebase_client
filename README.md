@@ -21,3 +21,7 @@ class Client(Base):
     updates_sent = Column(types.Integer, nullable=True, default=0)
     created_at = Column(types.DateTime(timezone=True), server_default=func.now())
 ```
+
+# Future Work
+
+- Billing framework, either monthly/yearly or by notification?
