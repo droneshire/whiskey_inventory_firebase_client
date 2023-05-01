@@ -9,6 +9,7 @@ export interface Inventory {
       // The current action for the team to perform
       action: ItemAction;
       name: string;
+      available: number;
     };
   };
   inventoryChange: number;

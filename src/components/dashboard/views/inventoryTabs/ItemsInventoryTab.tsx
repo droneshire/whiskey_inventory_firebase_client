@@ -68,7 +68,7 @@ interface ItemActionOption {
 type ItemProps = ItemSpec & {
   actionButtons: ItemActionOption[];
 };
-const Item: FC<ItemProps> = ({ itemId, name, actionButtons }) => {
+const Item: FC<ItemProps> = ({ itemId, name, available, actionButtons }) => {
   const [actionMenuAnchorEl, setActionMenuAnchorEl] =
     React.useState<null | HTMLElement>(null);
   const actionMenuOpen = Boolean(actionMenuAnchorEl);
@@ -86,6 +86,7 @@ const Item: FC<ItemProps> = ({ itemId, name, actionButtons }) => {
         </Tooltip>
       </TableCell>
       <TableCell>{name}</TableCell>
+      <TableCell>{available}</TableCell>
       <TableCell sx={{ textAlign: "right" }}>
         <Button onClick={handleActionMenuClick}>Actions</Button>
         <Menu
@@ -157,6 +158,7 @@ const NewItemModal: FC<ItemModalProps> = ({
   const modalRef = useRef<HTMLElement>(null);
   const [itemId, setitemId] = useState("");
   const [itemName, setitemName] = useState("");
+  const [itemAvailable, setitemAvailable] = useState(-1);
   const [itemAction, setItemAction] = useState<ItemAction>(ItemAction.TRACKING);
   const {
     runAction: doCreateItem,
@@ -165,7 +167,6 @@ const NewItemModal: FC<ItemModalProps> = ({
     clearError,
   } = useAsyncAction(createItem);
 
-  // rewrite the line below except to also ensure item id is 5 string digits
   const validitemId =
     itemId && !existingitemIds.includes(itemId) && itemId.length === 5;
   const disabled = creatingItem || !validitemId;
@@ -173,7 +174,9 @@ const NewItemModal: FC<ItemModalProps> = ({
   const reset = useCallback(() => {
     setItemAction(ItemAction.TRACKING);
     setitemId("");
-  }, [setItemAction, setitemId]);
+    setitemAvailable(-1);
+    setitemName("");
+  }, [setItemAction, setitemId, setitemAvailable, setitemName]);
 
   const doSubmit = useCallback(async () => {
     if (disabled) {
@@ -182,6 +185,7 @@ const NewItemModal: FC<ItemModalProps> = ({
     const success = await doCreateItem({
       itemId,
       name: itemName,
+      available: itemAvailable,
       action: itemAction,
     });
     if (success) {
@@ -236,7 +240,7 @@ const NewItemModal: FC<ItemModalProps> = ({
             value={itemId}
             onChange={(e) => setitemId(e.target.value)}
             error={!validitemId}
-            InputProps={{ inputComponent: IntegerInput as any }}
+            inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
           />
           <FormControl>
             <FormLabel>Action</FormLabel>
