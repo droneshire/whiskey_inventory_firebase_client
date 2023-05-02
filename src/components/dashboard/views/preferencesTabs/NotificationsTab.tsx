@@ -1,13 +1,20 @@
 import React, { FC } from "react";
 import { DocumentSnapshot } from "firebase/firestore";
+import dayjs, { Dayjs } from "dayjs";
 import phone from "phone";
 import {
   Typography,
   FormGroup,
   FormControlLabel,
   Divider,
+  Tooltip,
 } from "@mui/material";
+import { DateRange } from "@mui/x-date-pickers-pro";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { SingleInputTimeRangeField } from "@mui/x-date-pickers-pro/SingleInputTimeRangeField";
 
+import { addHour } from "utils/time";
 import { UserConfig } from "types/user";
 import {
   EmailInput,
@@ -21,6 +28,11 @@ const NotificationsTab: FC<{
   userConfigSnapshot: DocumentSnapshot<UserConfig>;
 }> = ({ userConfigSnapshot }) => {
   const updatingAnything = !!userConfigSnapshot?.metadata.fromCache;
+  const [timeRange, setTimeRange] = React.useState<DateRange<Dayjs>>(() => [
+    dayjs(Date.now()),
+    dayjs(Date.now() + addHour(4)),
+  ]);
+
   return (
     <>
       <Typography variant="h6" gutterBottom>
@@ -82,6 +94,16 @@ const NotificationsTab: FC<{
           label="SMS updates"
         />
       </FormGroup>
+      <Divider sx={{ marginTop: 2, marginBottom: 4 }} />
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <Tooltip title="Specify the time range where alerts can be sent. They will aggregate during the silent period">
+          <SingleInputTimeRangeField
+            label="Alert time range"
+            value={timeRange}
+            onChange={(newValue) => setTimeRange(newValue)}
+          />
+        </Tooltip>
+      </LocalizationProvider>
     </>
   );
 };
