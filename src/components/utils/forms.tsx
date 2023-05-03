@@ -1,5 +1,7 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { DocumentSnapshot, updateDoc } from "firebase/firestore";
+import React, { FC, useCallback, useEffect, useRef, useState } from "react";
+import dayjs, { Dayjs } from "dayjs";
+import { DocumentSnapshot, Timestamp, updateDoc } from "firebase/firestore";
+import TimezoneSelect, { Props as TimeZoneProps } from "react-timezone-select";
 import {
   Switch,
   Snackbar,
@@ -18,11 +20,19 @@ import {
 import Edit from "@mui/icons-material/Edit";
 import CheckCircle from "@mui/icons-material/CheckCircleOutline";
 import { IMaskInput } from "react-imask";
+import { DateRange } from "@mui/x-date-pickers-pro";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import {
+  SingleInputTimeRangeField,
+  SingleInputTimeRangeFieldProps,
+} from "@mui/x-date-pickers-pro/SingleInputTimeRangeField";
 
 import { useAsyncAction } from "hooks/async";
 import { useKeyPress } from "hooks/events";
 import { NestedKeyOf } from "utils/generics";
 import { usePrevious } from "hooks/misc";
+import { getFixedTimeWithHourAndMinute } from "utils/time";
 
 interface FirestoreBackedSwitchProps<DocType extends object>
   extends SwitchProps {
@@ -110,6 +120,98 @@ export function FirestoreBackedSlider<DocType extends object>({
           {`Failed to update: ${error}`}
         </Alert>
       </Snackbar>
+    </>
+  );
+}
+
+const DEFAULT_ALERT_START: Date = getFixedTimeWithHourAndMinute(
+  new Date(0),
+  8,
+  30
+);
+const DEFAULT_ALERT_END: Date = getFixedTimeWithHourAndMinute(
+  new Date(0),
+  16,
+  30
+);
+
+interface FirestoreBackedTimeRangeFieldProps<DocType extends object>
+  extends SingleInputTimeRangeFieldProps<DateRange<Dayjs>> {
+  docSnap: DocumentSnapshot<DocType>;
+  fieldPath: NestedKeyOf<DocType>;
+  isValid?: string;
+}
+
+export function FirestoreBackedTimeRangeField<DocType extends object>({
+  docSnap,
+  fieldPath,
+  disabled,
+  ...props
+}: FirestoreBackedTimeRangeFieldProps<DocType>) {
+  const backedValueSnap = docSnap.get(fieldPath); // current store value
+  const {
+    runAction: update,
+    running: updating,
+    error: updateError,
+    clearError,
+  } = useAsyncAction((value: Timestamp[]) =>
+    updateDoc(docSnap.ref, fieldPath, value)
+  );
+  const previousUpdating = usePrevious(updating);
+
+  let backedValue: DateRange<Dayjs>;
+  if (backedValueSnap === undefined) {
+    backedValue = [dayjs(DEFAULT_ALERT_START), dayjs(DEFAULT_ALERT_END)];
+    update([
+      Timestamp.fromDate(DEFAULT_ALERT_START),
+      Timestamp.fromDate(DEFAULT_ALERT_END),
+    ]);
+  } else {
+    backedValue = [
+      dayjs(backedValueSnap[0]?.toDate() || DEFAULT_ALERT_START),
+      dayjs(backedValueSnap[1]?.toDate() || DEFAULT_ALERT_END),
+    ];
+  }
+  const [inputValue, setInputValue] = useState<DateRange<Dayjs>>(backedValue);
+
+  useEffect(() => {
+    if (!updating && previousUpdating) {
+      setInputValue(backedValue);
+    }
+  }, [updating, previousUpdating, backedValue]);
+
+  return (
+    <>
+      <LocalizationProvider dateAdapter={AdapterDayjs} {...props}>
+        <Tooltip title="Specify the time range where alerts can be sent. They will aggregate during the silent period">
+          <SingleInputTimeRangeField
+            label={props.label ? props.label : ""}
+            value={inputValue}
+            onChange={(newValue) => {
+              setInputValue([
+                newValue[0]?.startOf("minute") || null,
+                newValue[1]?.startOf("minute") || null,
+              ]);
+              const newDateRange: Timestamp[] = [
+                Timestamp.fromDate(newValue[0]?.toDate() || new Date()),
+                Timestamp.fromDate(newValue[1]?.toDate() || new Date()),
+              ];
+              update(newDateRange);
+            }}
+            disabled={disabled || updating}
+            sx={{ marginBottom: "10px", maxWidth: 300 }}
+          />
+        </Tooltip>
+        <Snackbar
+          open={!!updateError}
+          autoHideDuration={5000}
+          onClose={clearError}
+        >
+          <Alert onClose={clearError} severity="error" sx={{ width: "100%" }}>
+            {`Failed to update: ${updateError}`}
+          </Alert>
+        </Snackbar>
+      </LocalizationProvider>
     </>
   );
 }
@@ -250,6 +352,52 @@ export function FirestoreBackedTextField<DocType extends object>({
           {`Failed to update: ${updateError}`}
         </Alert>
       </Snackbar>
+    </>
+  );
+}
+
+type FirestoreBackedTimeZoneProps<DocType extends object> = Omit<
+  TimeZoneProps,
+  "value"
+> & {
+  docSnap: DocumentSnapshot<DocType>;
+  fieldPath: NestedKeyOf<DocType>;
+  disabled: boolean;
+};
+
+export function FirestoreBackedTimeZoneSelect<DocType extends object>({
+  docSnap,
+  fieldPath,
+  disabled,
+  ...props
+}: FirestoreBackedTimeZoneProps<DocType>) {
+  const savedValue =
+    docSnap.get(fieldPath) ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const [value, setValue] = useState(savedValue);
+  const {
+    runAction: update,
+    running: updating,
+    error,
+    clearError,
+  } = useAsyncAction((enabled: number) =>
+    updateDoc(docSnap.ref, fieldPath, enabled)
+  );
+
+  useEffect(() => {
+    if (!updating) {
+      setValue(savedValue);
+    }
+  }, [savedValue, updating]);
+
+  return (
+    <>
+      <TimezoneSelect
+        value={value}
+        onChange={(value: any) => {
+          setValue(value);
+          update(value);
+        }}
+      />
     </>
   );
 }

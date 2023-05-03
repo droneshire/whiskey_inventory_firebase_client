@@ -1,3 +1,5 @@
+import { Timestamp } from "@firebase/firestore";
+
 export enum ItemAction {
   TRACKING = "TRACKING",
   UNTRACKED = "UNTRACKED",
@@ -17,6 +19,8 @@ export interface Inventory {
 
 export interface Preferences {
   notifications: {
+    alertTimeRange: Timestamp[];
+    alertTimeZone: string;
     sms: {
       phoneNumber: string;
       updatesEnabled: boolean;
