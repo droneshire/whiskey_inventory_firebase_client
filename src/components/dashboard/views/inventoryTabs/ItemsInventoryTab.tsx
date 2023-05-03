@@ -366,7 +366,7 @@ const ItemsInventoryTab: FC<{
             disabled={updatingAnything}
             docSnap={userConfigSnapshot!}
             min={0}
-            max={20}
+            max={10}
             fieldPath="inventory.inventoryChange"
             valueLabelDisplay="auto"
             marks={[
@@ -375,8 +375,8 @@ const ItemsInventoryTab: FC<{
                 label: "0",
               },
               {
-                value: 20,
-                label: "20",
+                value: 10,
+                label: "10",
               },
             ]}
             sx={{ maxWidth: 300 }}

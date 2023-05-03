@@ -90,7 +90,7 @@ export function FirestoreBackedSlider<DocType extends object>({
   ...props
 }: FirestoreBackedSiderProps<DocType>) {
   const savedValue = docSnap.get(fieldPath);
-  const [value, setValue] = useState(savedValue);
+  const [value, setValue] = useState(savedValue ?? 1);
   const {
     runAction: update,
     running: updating,
