@@ -12,3 +12,7 @@ export function getFixedTimeWithHourAndMinute(fixedDate: Date, hours: number, mi
   new_date.setHours(hours, minutes, 0, 0);
   return new_date;
 }
+
+export function getMinutesFromMidnight(date: Date): number {
+  return date.getHours() * 60 + date.getMinutes();
+}
