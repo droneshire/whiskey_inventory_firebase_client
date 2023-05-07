@@ -30,8 +30,9 @@ import {
 
 import { useAsyncAction } from "hooks/async";
 import { useKeyPress } from "hooks/events";
-import { NestedKeyOf } from "utils/generics";
 import { usePrevious } from "hooks/misc";
+import { getMinutesFromMidnight, getFixedTimeFromMinutes } from "utils/time";
+import { NestedKeyOf } from "utils/generics";
 
 interface FirestoreBackedSwitchProps<DocType extends object>
   extends SwitchProps {
@@ -125,6 +126,10 @@ export function FirestoreBackedSlider<DocType extends object>({
 
 const DEFAULT_ALERT_START: Date = new Date(Date.UTC(2023, 1, 1, 8, 30, 0));
 const DEFAULT_ALERT_END: Date = new Date(Date.UTC(2023, 1, 1, 16, 30, 0));
+const DEFAULT_ALERT_START_MINUTES: number =
+  getMinutesFromMidnight(DEFAULT_ALERT_START);
+const DEFAULT_ALERT_END_MINUTES: number =
+  getMinutesFromMidnight(DEFAULT_ALERT_END);
 
 interface FirestoreBackedTimeRangeFieldProps<DocType extends object>
   extends SingleInputTimeRangeFieldProps<DateRange<Dayjs>> {
@@ -139,28 +144,35 @@ export function FirestoreBackedTimeRangeField<DocType extends object>({
   disabled,
   ...props
 }: FirestoreBackedTimeRangeFieldProps<DocType>) {
-  const backedValueSnap = docSnap.get(fieldPath); // current store value
+  const backedValueMinutesSnap = docSnap.get(fieldPath); // current store value
   const {
     runAction: update,
     running: updating,
     error: updateError,
     clearError,
-  } = useAsyncAction((value: Timestamp[]) =>
+  } = useAsyncAction((value: number[]) =>
     updateDoc(docSnap.ref, fieldPath, value)
   );
   const previousUpdating = usePrevious(updating);
 
   let backedValue: DateRange<Dayjs>;
-  if (backedValueSnap === undefined) {
+  if (backedValueMinutesSnap === undefined) {
     backedValue = [dayjs(DEFAULT_ALERT_START), dayjs(DEFAULT_ALERT_END)];
-    update([
-      Timestamp.fromDate(DEFAULT_ALERT_START),
-      Timestamp.fromDate(DEFAULT_ALERT_END),
-    ]);
+    update([DEFAULT_ALERT_START_MINUTES, DEFAULT_ALERT_END_MINUTES]);
   } else {
     backedValue = [
-      dayjs(backedValueSnap[0]?.toDate() || DEFAULT_ALERT_START),
-      dayjs(backedValueSnap[1]?.toDate() || DEFAULT_ALERT_END),
+      dayjs(
+        getFixedTimeFromMinutes(
+          DEFAULT_ALERT_START,
+          backedValueMinutesSnap[0] || DEFAULT_ALERT_START_MINUTES
+        )
+      ),
+      dayjs(
+        getFixedTimeFromMinutes(
+          DEFAULT_ALERT_END,
+          backedValueMinutesSnap[1] || DEFAULT_ALERT_END_MINUTES
+        )
+      ),
     ];
   }
   const [inputValue, setInputValue] = useState<DateRange<Dayjs>>(backedValue);
@@ -183,9 +195,13 @@ export function FirestoreBackedTimeRangeField<DocType extends object>({
                 newValue[0]?.startOf("minute") || null,
                 newValue[1]?.startOf("minute") || null,
               ]);
-              const newDateRange: Timestamp[] = [
-                Timestamp.fromDate(newValue[0]?.toDate() || new Date()),
-                Timestamp.fromDate(newValue[1]?.toDate() || new Date()),
+              const newDateRange: number[] = [
+                getMinutesFromMidnight(
+                  newValue[0]?.toDate() || DEFAULT_ALERT_START
+                ),
+                getMinutesFromMidnight(
+                  newValue[1]?.toDate() || DEFAULT_ALERT_END
+                ),
               ];
               update(newDateRange);
             }}

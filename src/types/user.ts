@@ -19,7 +19,7 @@ export interface Inventory {
 
 export interface Preferences {
   notifications: {
-    alertTimeRange: Timestamp[];
+    alertTimeRange: number[];
     alertTimeZone: string;
     sms: {
       phoneNumber: string;
