@@ -19,11 +19,12 @@ export interface Inventory {
 
 export interface Preferences {
   notifications: {
-    alertTimeRange: number[];
-    alertTimeZone: string;
     sms: {
       phoneNumber: string;
       updatesEnabled: boolean;
+      alertTimeRange: number[];
+      alertTimeZone: string;
+      alertWindowEnabled: boolean;
     };
     email: {
       email: string;

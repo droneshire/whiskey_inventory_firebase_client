@@ -24,7 +24,9 @@ const NotificationsTab: FC<{
   userConfigSnapshot: DocumentSnapshot<UserConfig>;
 }> = ({ userConfigSnapshot }) => {
   const updatingAnything = !!userConfigSnapshot?.metadata.fromCache;
-
+  const windowAlertsEnabled = userConfigSnapshot?.get(
+    "preferences.notifications.sms.alertWindowEnabled"
+  );
   return (
     <>
       <Typography variant="h6" gutterBottom>
@@ -38,7 +40,7 @@ const NotificationsTab: FC<{
           fieldPath="preferences.notifications.email.email"
           variant="standard"
           isValid={(email) => !email || isValidEmail(email)}
-          helperText={(email, validEmail) =>
+          helperText={(_, validEmail) =>
             validEmail ? "" : "Invalid email address"
           }
           sx={{ maxWidth: 300 }}
@@ -87,19 +89,30 @@ const NotificationsTab: FC<{
         />
       </FormGroup>
       <Divider sx={{ marginTop: 2, marginBottom: 4 }} />
-
-      <FirestoreBackedTimeRangeField
-        disabled={updatingAnything}
-        docSnap={userConfigSnapshot!}
-        fieldPath="preferences.notifications.alertTimeRange"
-        label="Alert time range"
-        sx={{ maxWidth: 300, marginBottom: 4 }}
-      ></FirestoreBackedTimeRangeField>
-      <FirestoreBackedTimeZoneSelect
-        disabled={updatingAnything}
-        docSnap={userConfigSnapshot!}
-        fieldPath="preferences.notifications.alertTimeZone"
-      />
+      <FormGroup>
+        <FirestoreBackedTimeRangeField
+          disabled={updatingAnything || !windowAlertsEnabled}
+          docSnap={userConfigSnapshot!}
+          fieldPath="preferences.notifications.sms.alertTimeRange"
+          label="Alert time range"
+          sx={{ maxWidth: 300, marginBottom: 4 }}
+        ></FirestoreBackedTimeRangeField>
+        <FirestoreBackedTimeZoneSelect
+          disabled={updatingAnything || !windowAlertsEnabled}
+          docSnap={userConfigSnapshot!}
+          fieldPath="preferences.notifications.sms.alertTimeZone"
+        />
+        <FormControlLabel
+          control={
+            <FirestoreBackedSwitch
+              disabled={updatingAnything}
+              docSnap={userConfigSnapshot!}
+              fieldPath="preferences.notifications.sms.alertWindowEnabled"
+            />
+          }
+          label="Use SMS alert window"
+        />
+      </FormGroup>
     </>
   );
 };

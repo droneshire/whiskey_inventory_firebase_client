@@ -400,6 +400,7 @@ export function FirestoreBackedTimeZoneSelect<DocType extends object>({
     <>
       <TimezoneSelect
         value={value}
+        isDisabled={disabled || updating}
         onChange={(value: any) => {
           setValue(value);
           update(value);
