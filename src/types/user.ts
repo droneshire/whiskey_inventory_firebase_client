@@ -3,6 +3,14 @@ export enum ItemAction {
   UNTRACKED = "UNTRACKED",
 }
 
+export enum ClientAction {
+  NONE = "NONE",
+  DELETE = "DELETE",
+  ADD = "ADD",
+  PAID = "PAID",
+  UNPAID = "UNPAID",
+}
+
 export interface Inventory {
   items: {
     [id: string]: {
@@ -38,12 +46,33 @@ export interface Accounting {
   hasPaid: boolean;
 }
 
-export interface UserConfig {
+export interface ClientConfig {
   inventory: Inventory;
   preferences: Preferences;
   accounting: Accounting;
 }
 
-export interface ClientsConfig {
-  [id: string]: UserConfig;
+export const DEFAULT_USER_CONFIG = {
+  inventory: {
+    items: {},
+    inventoryChange: 1,
+  },
+  accounting: {
+    hasPaid: false,
+    plan: "",
+    nextBillingDate: "",
+    nextBillingAmount: 0.0,
+  },
+  preferences: {
+    notifications: {
+      email: { email: "", updatesEnabled: true },
+      sms: {
+        phoneNumber: "",
+        updatesEnabled: true,
+        alertTimeRange: [],
+        alertWindowEnabled: false,
+        alertTimeZone: "America/Los_Angeles",
+      },
+    },
+  },
 }

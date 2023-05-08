@@ -32,7 +32,7 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DoDisturbIcon from "@mui/icons-material/DoDisturb";
 import LocalBarIcon from "@mui/icons-material/LocalBar";
-import { Inventory, ItemAction, UserConfig } from "types/user";
+import { Inventory, ItemAction, ClientConfig } from "types/user";
 import { Box } from "@mui/system";
 import {
   FontAwesomeIcon,
@@ -42,7 +42,7 @@ import { faChartSimple } from "@fortawesome/free-solid-svg-icons";
 
 import { capitalizeFirstLetter } from "utils/string";
 import { useAsyncAction } from "hooks/async";
-import { FirestoreBackedSlider, IntegerInput } from "components/utils/forms";
+import { FirestoreBackedSlider } from "components/utils/forms";
 import {
   DocumentSnapshot,
   FieldPath,
@@ -192,7 +192,16 @@ const NewItemModal: FC<ItemModalProps> = ({
       reset();
       onClose();
     }
-  }, [onClose, reset, doCreateItem, itemId, itemAction, disabled]);
+  }, [
+    onClose,
+    reset,
+    doCreateItem,
+    itemId,
+    itemAction,
+    itemAvailable,
+    itemName,
+    disabled,
+  ]);
 
   const keyHander = useCallback(
     ({ key }: KeyboardEvent) => {
@@ -301,7 +310,7 @@ const NewItemModal: FC<ItemModalProps> = ({
 };
 
 const ItemsInventoryTab: FC<{
-  userConfigSnapshot: DocumentSnapshot<UserConfig>;
+  userConfigSnapshot: DocumentSnapshot<ClientConfig>;
 }> = ({ userConfigSnapshot }) => {
   const inventory = userConfigSnapshot?.data()?.inventory;
   const updatingAnything = !!userConfigSnapshot?.metadata.fromCache;
@@ -315,7 +324,6 @@ const ItemsInventoryTab: FC<{
     return <CircularProgress />;
   }
   const trackingItems: ItemSpec[] = [];
-  const miningItems: ItemSpec[] = [];
   const inactiveItems: ItemSpec[] = [];
   Object.entries(inventory.items || {}).forEach((t) => {
     const [itemId, item] = t;

@@ -36,7 +36,6 @@ export function useCollectionSnapshot<DocumentData>(
 ): QuerySnapshot<DocumentData> | undefined {
   const [collectionSnap, setCollectionSnap] = useState<QuerySnapshot<DocumentData> | undefined>();
   useEffect(() => {
-    console.log("useCollectionSnapshot", collectionReference);
     if (!collectionReference){
       return;
     }

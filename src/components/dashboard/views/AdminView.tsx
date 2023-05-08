@@ -7,8 +7,13 @@ import { DashboardViewContext } from "components/dashboard/DashboardPage";
 import adminTabsList from "./adminTabs/adminTabsList";
 
 const AdminView: FC = () => {
-  const { user, userConfigSnapshot, userConfigRef, clientsSnapshot } =
-    useOutletContext<DashboardViewContext>();
+  const {
+    user,
+    userConfigSnapshot,
+    userConfigRef,
+    clientsSnapshot,
+    clientsConfigRef,
+  } = useOutletContext<DashboardViewContext>();
 
   const preferences = userConfigSnapshot?.get("preferences");
   const [selectedTabIndex, setSelectedTabIndex] = React.useState(
@@ -36,7 +41,10 @@ const AdminView: FC = () => {
         {adminTabsList.map(({ key, component: C }) => {
           return (
             <TabPanel selectedTabIndex={selectedTabIndex} index={key} key={key}>
-              <C clientsSnapshot={clientsSnapshot!} />
+              <C
+                clientsSnapshot={clientsSnapshot!}
+                clientsConfigRef={clientsConfigRef!}
+              />
             </TabPanel>
           );
         })}

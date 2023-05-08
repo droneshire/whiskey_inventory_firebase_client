@@ -7,7 +7,13 @@ import { DashboardViewContext } from "components/dashboard/DashboardPage";
 import inventoryTabsList from "./inventoryTabs/inventoryTabsList";
 
 const InventoryView: FC = () => {
-  const { user, userConfigSnapshot } = useOutletContext<DashboardViewContext>();
+  const {
+    user,
+    userConfigSnapshot,
+    userConfigRef,
+    clientsSnapshot,
+    clientsConfigRef,
+  } = useOutletContext<DashboardViewContext>();
 
   const inventory = userConfigSnapshot?.get("inventory");
   const [selectedTabIndex, setSelectedTabIndex] = React.useState(

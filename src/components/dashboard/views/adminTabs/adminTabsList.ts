@@ -1,11 +1,11 @@
-import NewUsersTab from "./NewUsersTab";
+import ClientsTab from "./ClientsTab";
 // import OtherPreferencesTab from "./OtherPreferences";
 
 const adminTabsList = [
   {
-    key: "newUsers",
-    label: "New Users",
-    component: NewUsersTab,
+    key: "clients",
+    label: "Clients",
+    component: ClientsTab,
   },
 ];
 

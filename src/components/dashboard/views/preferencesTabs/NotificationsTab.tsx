@@ -8,7 +8,7 @@ import {
   Divider,
 } from "@mui/material";
 
-import { UserConfig } from "types/user";
+import { ClientConfig } from "types/user";
 import {
   EmailInput,
   FirestoreBackedSwitch,
@@ -20,7 +20,7 @@ import {
 import { isValidEmail } from "utils/validators";
 
 const NotificationsTab: FC<{
-  userConfigSnapshot: DocumentSnapshot<UserConfig>;
+  userConfigSnapshot: DocumentSnapshot<ClientConfig>;
 }> = ({ userConfigSnapshot }) => {
   const updatingAnything = !!userConfigSnapshot?.metadata.fromCache;
   const windowAlertsEnabled = userConfigSnapshot?.get(

@@ -21,7 +21,7 @@ import Drawer from "./Drawer";
 import { useViewsList } from "./views/viewsList";
 import { ErrorFallback } from "components/utils/errors";
 import { ADMIN_USERS } from "utils/constants";
-import { ClientsConfig, UserConfig } from "types/user";
+import { ClientConfig } from "types/user";
 import {
   useDocumentSnapshot,
   useCollectionSnapshot,
@@ -30,9 +30,10 @@ const drawerWidth: number = 240;
 
 export interface DashboardViewContext {
   user?: User;
-  userConfigSnapshot?: DocumentSnapshot<UserConfig>;
-  userConfigRef?: DocumentReference<UserConfig>;
-  clientsSnapshot?: QuerySnapshot<ClientsConfig>;
+  userConfigSnapshot?: DocumentSnapshot<ClientConfig>;
+  userConfigRef?: DocumentReference<ClientConfig>;
+  clientsSnapshot?: QuerySnapshot<ClientConfig>;
+  clientsConfigRef?: CollectionReference<ClientConfig>;
 }
 
 export interface DashboardProps {
@@ -42,28 +43,23 @@ const DashboardPage: FC<DashboardProps> = ({ user }) => {
   const [open, setOpen] = useState(false);
   const location = useLocation();
   const viewsList = useViewsList(user);
+  const db = getFirestore(myApp);
   const userConfigRef = useMemo(() => {
     if (!user) {
       return undefined;
     }
     return doc(
-      collection(
-        getFirestore(myApp),
-        "clients"
-      ) as CollectionReference<UserConfig>,
+      collection(db, "clients") as CollectionReference<ClientConfig>,
       user?.email ?? ""
     );
-  }, [user]);
+  }, [user, db]);
   const clientsConfigRef = useMemo(() => {
-    console.log(user?.email, ADMIN_USERS.includes(user?.email ?? ""));
     if (user && ADMIN_USERS.includes(user.email ?? "")) {
-      return collection(
-        getFirestore(myApp),
-        "clients"
-      ) as CollectionReference<ClientsConfig>;
+      console.log("client ref", db);
+      return collection(db, "clients") as CollectionReference<ClientConfig>;
     }
     return undefined;
-  }, [user]);
+  }, [user, db]);
   const userConfigSnapshot = useDocumentSnapshot(userConfigRef);
   const clientsSnapshot = useCollectionSnapshot(clientsConfigRef);
 
@@ -108,6 +104,7 @@ const DashboardPage: FC<DashboardProps> = ({ user }) => {
                   userConfigSnapshot,
                   userConfigRef,
                   clientsSnapshot,
+                  clientsConfigRef,
                 } as DashboardViewContext
               }
             />
