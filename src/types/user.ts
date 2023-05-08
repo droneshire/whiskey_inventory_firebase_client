@@ -1,5 +1,3 @@
-import { Timestamp } from "@firebase/firestore";
-
 export enum ItemAction {
   TRACKING = "TRACKING",
   UNTRACKED = "UNTRACKED",
@@ -33,7 +31,19 @@ export interface Preferences {
   };
 }
 
+export interface Accounting {
+  plan: string;
+  nextBillingDate: string;
+  nextBillingAmount: number;
+  hasPaid: boolean;
+}
+
 export interface UserConfig {
   inventory: Inventory;
   preferences: Preferences;
+  accounting: Accounting;
+}
+
+export interface ClientsConfig {
+  [id: string]: UserConfig;
 }

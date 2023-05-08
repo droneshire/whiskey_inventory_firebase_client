@@ -1,22 +1,25 @@
 import React, { FC } from "react";
 import { useOutletContext } from "react-router-dom";
-import { Box, CircularProgress, Tab, Tabs } from "@mui/material";
+import { CircularProgress, Box, Tab, Tabs } from "@mui/material";
 
-import { DashboardViewContext } from "components/dashboard/DashboardPage";
-import preferencesTabsList from "./preferencesTabs/preferencesTabsList";
 import { TabPanel } from "components/utils/tabs";
+import { DashboardViewContext } from "components/dashboard/DashboardPage";
+import adminTabsList from "./adminTabs/adminTabsList";
 
-const PreferencesView: FC = () => {
-  const { userConfigSnapshot } = useOutletContext<DashboardViewContext>();
+const AdminView: FC = () => {
+  const { user, userConfigSnapshot, userConfigRef, clientsSnapshot } =
+    useOutletContext<DashboardViewContext>();
+
   const preferences = userConfigSnapshot?.get("preferences");
   const [selectedTabIndex, setSelectedTabIndex] = React.useState(
-    preferencesTabsList[0].key
+    adminTabsList[0].key
   );
 
   const selectTab = (event: React.SyntheticEvent, newValue: string) => {
     setSelectedTabIndex(newValue);
   };
 
+  // Admin must have preferences set as a minimal requirement
   if (!preferences) {
     return <CircularProgress />;
   }
@@ -25,15 +28,15 @@ const PreferencesView: FC = () => {
       <>
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
           <Tabs value={selectedTabIndex} onChange={selectTab} centered>
-            {preferencesTabsList.map(({ key, label }) => {
+            {adminTabsList.map(({ key, label }) => {
               return <Tab label={label} value={key} key={key} />;
             })}
           </Tabs>
         </Box>
-        {preferencesTabsList.map(({ key, component: C }) => {
+        {adminTabsList.map(({ key, component: C }) => {
           return (
             <TabPanel selectedTabIndex={selectedTabIndex} index={key} key={key}>
-              <C userConfigSnapshot={userConfigSnapshot!} />
+              <C clientsSnapshot={clientsSnapshot!} />
             </TabPanel>
           );
         })}
@@ -42,4 +45,4 @@ const PreferencesView: FC = () => {
   );
 };
 
-export default PreferencesView;
+export default AdminView;

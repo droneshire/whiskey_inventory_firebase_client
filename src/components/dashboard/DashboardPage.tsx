@@ -7,25 +7,32 @@ import {
   doc,
   CollectionReference,
   DocumentSnapshot,
+  DocumentReference,
+  QuerySnapshot,
 } from "firebase/firestore";
 
 import { Box, CssBaseline, Toolbar, Container } from "@mui/material";
+import { ErrorBoundary } from "react-error-boundary";
 
-import myApp from "firebaseApp";
 import Copyright from "components/Copyright";
-import { useDocumentSnapshot } from "hooks/firebase/firestore";
+import myApp from "firebaseApp";
 import AppBar from "./AppBar";
 import Drawer from "./Drawer";
-import { UserConfig } from "types/user";
 import { useViewsList } from "./views/viewsList";
-import { ErrorBoundary } from "react-error-boundary";
 import { ErrorFallback } from "components/utils/errors";
-
+import { ADMIN_USERS } from "utils/constants";
+import { ClientsConfig, UserConfig } from "types/user";
+import {
+  useDocumentSnapshot,
+  useCollectionSnapshot,
+} from "hooks/firebase/firestore";
 const drawerWidth: number = 240;
 
 export interface DashboardViewContext {
   user?: User;
   userConfigSnapshot?: DocumentSnapshot<UserConfig>;
+  userConfigRef?: DocumentReference<UserConfig>;
+  clientsSnapshot?: QuerySnapshot<ClientsConfig>;
 }
 
 export interface DashboardProps {
@@ -47,7 +54,18 @@ const DashboardPage: FC<DashboardProps> = ({ user }) => {
       user?.email ?? ""
     );
   }, [user]);
+  const clientsConfigRef = useMemo(() => {
+    console.log(user?.email, ADMIN_USERS.includes(user?.email ?? ""));
+    if (user && ADMIN_USERS.includes(user.email ?? "")) {
+      return collection(
+        getFirestore(myApp),
+        "clients"
+      ) as CollectionReference<ClientsConfig>;
+    }
+    return undefined;
+  }, [user]);
   const userConfigSnapshot = useDocumentSnapshot(userConfigRef);
+  const clientsSnapshot = useCollectionSnapshot(clientsConfigRef);
 
   if (!user) {
     return <Navigate to="/login" state={{ from: location }} replace />;
@@ -84,7 +102,14 @@ const DashboardPage: FC<DashboardProps> = ({ user }) => {
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
           <ErrorBoundary FallbackComponent={ErrorFallback}>
             <Outlet
-              context={{ user, userConfigSnapshot } as DashboardViewContext}
+              context={
+                {
+                  user,
+                  userConfigSnapshot,
+                  userConfigRef,
+                  clientsSnapshot,
+                } as DashboardViewContext
+              }
             />
           </ErrorBoundary>
           <Copyright sx={{ pt: 4 }} />

@@ -3,7 +3,9 @@ import {
   onSnapshot,
   FirestoreError,
   DocumentSnapshot,
+  QuerySnapshot,
   DocumentReference,
+  CollectionReference,
 } from "firebase/firestore";
 
 const firestoreErrorHandler = (error: FirestoreError) => {
@@ -27,4 +29,27 @@ export function useDocumentSnapshot<DocType>(
     );
   }, [docReference]);
   return docSnap;
+}
+
+export function useCollectionSnapshot<DocumentData>(
+  collectionReference: CollectionReference<DocumentData> | undefined
+): QuerySnapshot<DocumentData> | undefined {
+  const [collectionSnap, setCollectionSnap] = useState<QuerySnapshot<DocumentData> | undefined>();
+  useEffect(() => {
+    console.log("useCollectionSnapshot", collectionReference);
+    if (!collectionReference){
+      return;
+    }
+    return onSnapshot(
+      collectionReference,
+      (snap) => {
+        setCollectionSnap(snap);
+        snap.forEach((doc) => {
+          console.log("Client", doc.id);
+        });
+      },
+      firestoreErrorHandler
+    );
+  }, [collectionReference]);
+  return collectionSnap;
 }

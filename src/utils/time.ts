@@ -1,5 +1,12 @@
 const HOURS = 60*60*1000;
 
+export const DEFAULT_ALERT_START: Date = new Date(Date.UTC(2023, 1, 1, 8, 30, 0));
+export const DEFAULT_ALERT_END: Date = new Date(Date.UTC(2023, 1, 1, 16, 30, 0));
+export const DEFAULT_ALERT_START_MINUTES: number =
+  getMinutesFromMidnight(DEFAULT_ALERT_START);
+export const DEFAULT_ALERT_END_MINUTES: number =
+  getMinutesFromMidnight(DEFAULT_ALERT_END);
+
 export function addHour(hours: number) {
   return HOURS * hours;
 }

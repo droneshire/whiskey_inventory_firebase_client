@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import { getErrorMessage } from "utils/errors";
 
 // Run an async function and watch for errors
-export function useAsyncAction<T>(action: (value: T) => Promise<void> | void) {
+export function useAsyncAction<T, P>(action: (value: T) => P | void) {
   const [running, setRunning] = useState(false);
   const [error, setError] = useState("");
   const clearError = () => setError("");

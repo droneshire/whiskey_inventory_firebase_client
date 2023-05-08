@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
-import { DocumentSnapshot, Timestamp, updateDoc } from "firebase/firestore";
+import { DocumentSnapshot, updateDoc } from "firebase/firestore";
 import TimezoneSelect, { Props as TimeZoneProps } from "react-timezone-select";
 import {
   Switch,
@@ -31,7 +31,14 @@ import {
 import { useAsyncAction } from "hooks/async";
 import { useKeyPress } from "hooks/events";
 import { usePrevious } from "hooks/misc";
-import { getMinutesFromMidnight, getFixedTimeFromMinutes } from "utils/time";
+import {
+  DEFAULT_ALERT_END,
+  DEFAULT_ALERT_START,
+  DEFAULT_ALERT_START_MINUTES,
+  DEFAULT_ALERT_END_MINUTES,
+  getFixedTimeFromMinutes,
+  getMinutesFromMidnight,
+} from "utils/time";
 import { NestedKeyOf } from "utils/generics";
 
 interface FirestoreBackedSwitchProps<DocType extends object>
@@ -96,8 +103,8 @@ export function FirestoreBackedSlider<DocType extends object>({
     running: updating,
     error,
     clearError,
-  } = useAsyncAction((enabled: number) =>
-    updateDoc(docSnap.ref, fieldPath, enabled)
+  } = useAsyncAction((value: number) =>
+    updateDoc(docSnap.ref, fieldPath, value)
   );
 
   useEffect(() => {
@@ -123,13 +130,6 @@ export function FirestoreBackedSlider<DocType extends object>({
     </>
   );
 }
-
-const DEFAULT_ALERT_START: Date = new Date(Date.UTC(2023, 1, 1, 8, 30, 0));
-const DEFAULT_ALERT_END: Date = new Date(Date.UTC(2023, 1, 1, 16, 30, 0));
-const DEFAULT_ALERT_START_MINUTES: number =
-  getMinutesFromMidnight(DEFAULT_ALERT_START);
-const DEFAULT_ALERT_END_MINUTES: number =
-  getMinutesFromMidnight(DEFAULT_ALERT_END);
 
 interface FirestoreBackedTimeRangeFieldProps<DocType extends object>
   extends SingleInputTimeRangeFieldProps<DateRange<Dayjs>> {

@@ -6,7 +6,6 @@ import {
   FormGroup,
   FormControlLabel,
   Divider,
-  Tooltip,
 } from "@mui/material";
 
 import { UserConfig } from "types/user";
