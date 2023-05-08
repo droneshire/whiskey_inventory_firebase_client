@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore";
+
 export enum ItemAction {
   TRACKING = "TRACKING",
   UNTRACKED = "UNTRACKED",
@@ -23,13 +25,21 @@ export interface Inventory {
   inventoryChange: number;
 }
 
+export interface AlertTimeZone {
+  abbrev: string;
+  altName: string;
+  label: string;
+  offset: number;
+  value: string;
+}
+
 export interface Preferences {
   notifications: {
     sms: {
       phoneNumber: string;
       updatesEnabled: boolean;
       alertTimeRange: number[];
-      alertTimeZone: string;
+      alertTimeZone: AlertTimeZone;
       alertWindowEnabled: boolean;
     };
     email: {
@@ -69,9 +79,15 @@ export const DEFAULT_USER_CONFIG = {
       sms: {
         phoneNumber: "",
         updatesEnabled: true,
+        alertTimeZone: {
+          abbrev: "PDT",
+          altName: "Pacific Daylight Time",
+          label: "(GMT-07:00) Pacific Time",
+          offset: -7,
+          value: "America/Los_Angeles",
+        },
         alertTimeRange: [],
         alertWindowEnabled: false,
-        alertTimeZone: "America/Los_Angeles",
       },
     },
   },
