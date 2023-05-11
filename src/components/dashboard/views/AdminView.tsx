@@ -13,6 +13,7 @@ const AdminView: FC = () => {
     userConfigRef,
     clientsSnapshot,
     clientsConfigRef,
+    healthMonitorSnapshot,
   } = useOutletContext<DashboardViewContext>();
 
   const preferences = userConfigSnapshot?.get("preferences");
@@ -44,6 +45,7 @@ const AdminView: FC = () => {
               <C
                 clientsSnapshot={clientsSnapshot!}
                 clientsConfigRef={clientsConfigRef!}
+                healthMonitorSnapshot={healthMonitorSnapshot!}
               />
             </TabPanel>
           );

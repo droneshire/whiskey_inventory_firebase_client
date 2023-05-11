@@ -3,10 +3,16 @@ service cloud.firestore {
   match /databases/{database}/documents {
     match /clients/{email} {
       function isAdmin(request) {
-        return request.auth.token.email == "ryeager12@gmail.com";
+        return request.auth.token.email == "ryeager12@gmail.com" || request.auth.token.email == "jctilton@gmail.com";
       }
       allow read, update: if request.auth.token.email == email || isAdmin(request);
       allow read, update, delete: if isAdmin(request);
+    }
+    match /health_monitor/heartbeat {
+      function isAdmin(request) {
+        return request.auth.token.email == "ryeager12@gmail.com" || request.auth.token.email == "jctilton@gmail.com";
+      }
+      allow read: if isAdmin(request);
     }
   }
 }

@@ -22,6 +22,7 @@ import { useViewsList } from "./views/viewsList";
 import { ErrorFallback } from "components/utils/errors";
 import { ADMIN_USERS } from "utils/constants";
 import { ClientConfig } from "types/user";
+import { HealthMonitorConfig } from "types/health_monitor";
 import {
   useDocumentSnapshot,
   useCollectionSnapshot,
@@ -34,6 +35,7 @@ export interface DashboardViewContext {
   userConfigRef?: DocumentReference<ClientConfig>;
   clientsSnapshot?: QuerySnapshot<ClientConfig>;
   clientsConfigRef?: CollectionReference<ClientConfig>;
+  healthMonitorSnapshot?: DocumentSnapshot<HealthMonitorConfig>;
 }
 
 export interface DashboardProps {
@@ -53,6 +55,15 @@ const DashboardPage: FC<DashboardProps> = ({ user }) => {
       user?.email ?? ""
     );
   }, [user, db]);
+  const healthMonitorRef = useMemo(() => {
+    if (!user) {
+      return undefined;
+    }
+    return doc(
+      collection(db, "admin") as CollectionReference<HealthMonitorConfig>,
+      "health_monitor"
+    );
+  }, [user, db]);
   const clientsConfigRef = useMemo(() => {
     if (user && ADMIN_USERS.includes(user.email ?? "")) {
       console.log("client ref", db);
@@ -62,7 +73,7 @@ const DashboardPage: FC<DashboardProps> = ({ user }) => {
   }, [user, db]);
   const userConfigSnapshot = useDocumentSnapshot(userConfigRef);
   const clientsSnapshot = useCollectionSnapshot(clientsConfigRef);
-
+  const healthMonitorSnapshot = useDocumentSnapshot(healthMonitorRef);
   if (!user) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
@@ -105,6 +116,7 @@ const DashboardPage: FC<DashboardProps> = ({ user }) => {
                   userConfigRef,
                   clientsSnapshot,
                   clientsConfigRef,
+                  healthMonitorSnapshot,
                 } as DashboardViewContext
               }
             />

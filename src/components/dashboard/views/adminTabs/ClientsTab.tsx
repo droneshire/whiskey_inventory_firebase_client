@@ -5,6 +5,7 @@ import {
   deleteDoc,
   updateDoc,
   QuerySnapshot,
+  DocumentSnapshot,
   CollectionReference,
 } from "firebase/firestore";
 import {
@@ -39,6 +40,7 @@ import DoNotDisturbOnIcon from "@mui/icons-material/DoNotDisturbOn";
 import { useAsyncAction } from "hooks/async";
 import { useKeyPress } from "hooks/events";
 import { DEFAULT_USER_CONFIG, ClientAction, ClientConfig } from "types/user";
+import { HealthMonitorConfig } from "types/health_monitor";
 import { isValidEmail } from "utils/validators";
 
 interface ClientActionOption {
@@ -275,6 +277,7 @@ const NewClientModal: FC<ClientModalProps> = ({
 const ClientsTab: FC<{
   clientsSnapshot: QuerySnapshot<ClientConfig>;
   clientsConfigRef: CollectionReference<ClientConfig>;
+  healthMonitorSnapshot: DocumentSnapshot<HealthMonitorConfig>;
 }> = ({ clientsSnapshot, clientsConfigRef }) => {
   const clients = clientsSnapshot?.docs;
   const [modalOpen, setModalOpen] = React.useState(false);
