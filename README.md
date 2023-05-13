@@ -16,7 +16,7 @@ The server side is located at: https://github.com/droneshire/whiskey_inventory_a
 # Dashboard
 The dashboard contains several views, one of which is an admin only view:
 
-- Admin - manage all clients' inventory preferences
+- Admin - manage all clients' inventory preferences, manage payment status, and monitor the backend health
 - Inventory - add inventory to track and manage alert inventory change threshold
 - Preferences - manage contact info and alert preferences
 
@@ -24,18 +24,67 @@ The dashboard contains several views, one of which is an admin only view:
 
 ### Client
 ```
-class Client(Base):
-    __tablename__ = "Client"
+export enum ItemAction {
+  TRACKING = "TRACKING",
+  UNTRACKED = "UNTRACKED",
+}
 
-    id = Column(types.Integer, primary_key=True)
-    name = Column(types.String(80), unique=True, nullable=False)
-    items = relationship("Item", backref="Client")
-    email = Column(types.String(80), unique=True, nullable=False)
-    phone_number = Column(types.String(11), unique=True, nullable=False)
-    threshold_inventory = Column(types.Integer, nullable=True, default=1)
-    last_updated = Column(types.DateTime(timezone=True), nullable=True)
-    updates_sent = Column(types.Integer, nullable=True, default=0)
-    created_at = Column(types.DateTime(timezone=True), server_default=func.now())
+export enum ClientAction {
+  NONE = "NONE",
+  DELETE = "DELETE",
+  ADD = "ADD",
+  PAID = "PAID",
+  UNPAID = "UNPAID",
+}
+
+export interface Inventory {
+  items: {
+    [id: string]: {
+      // The current action for the team to perform
+      action: ItemAction;
+      name: string;
+      available: number;
+    };
+  };
+  inventoryChange: number;
+}
+
+export interface AlertTimeZone {
+  abbrev: string;
+  altName: string;
+  label: string;
+  offset: number;
+  value: string;
+}
+
+export interface Preferences {
+  notifications: {
+    sms: {
+      phoneNumber: string;
+      updatesEnabled: boolean;
+      alertTimeRange: number[];
+      alertTimeZone: AlertTimeZone;
+      alertWindowEnabled: boolean;
+    };
+    email: {
+      email: string;
+      updatesEnabled: boolean;
+    };
+  };
+}
+
+export interface Accounting {
+  plan: string;
+  nextBillingDate: string;
+  nextBillingAmount: number;
+  hasPaid: boolean;
+}
+
+export interface ClientConfig {
+  inventory: Inventory;
+  preferences: Preferences;
+  accounting: Accounting;
+}
 ```
 
 # Future Work
