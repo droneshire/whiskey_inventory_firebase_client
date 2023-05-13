@@ -23,23 +23,25 @@ export const HealthMonitorTab: FC<{
   const [heartbeatColor, setHeartbeatColor] = useState<"success" | "error">(
     "error"
   );
-  const [lastHeartbeatSeconds, setLastHeartbeatSeconds] = useState<number>(0);
+  const [heartbeatSeconds, setHeartbeatSeconds] = useState<number>(
+    heartbeat?.seconds ?? timeBetweenHeartbeatSeconds + 1
+  );
 
   useEffect(() => {
     if (heartbeat) {
-      const newHeartbeat = heartbeat?.seconds ?? 0;
-      console.log(newHeartbeat - lastHeartbeatSeconds);
-      if (newHeartbeat - lastHeartbeatSeconds > timeBetweenHeartbeatSeconds) {
+      const now: number = Math.floor(Date.now() / 1000);
+      const newHeartbeat: number = heartbeat?.seconds ?? heartbeatSeconds;
+      console.log(now, newHeartbeat, heartbeatSeconds, now - heartbeatSeconds);
+      if (now - heartbeatSeconds > timeBetweenHeartbeatSeconds) {
         setHeartbeatString("Offline");
         setHeartbeatColor("error");
       } else {
         setHeartbeatString("Online");
         setHeartbeatColor("success");
       }
-
-      setLastHeartbeatSeconds(newHeartbeat);
+      setHeartbeatSeconds(newHeartbeat);
     }
-  }, [heartbeat, lastHeartbeatSeconds, timeBetweenHeartbeatSeconds]);
+  }, [heartbeat, heartbeatSeconds, timeBetweenHeartbeatSeconds]);
 
   return (
     <>

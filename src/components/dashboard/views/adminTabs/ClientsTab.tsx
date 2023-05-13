@@ -298,7 +298,6 @@ const ClientsTab: FC<{
       if (clientAction === ClientAction.DELETE) {
         deleteDoc(doc(clientsConfigRef, actionClientId));
       } else if (clientAction === ClientAction.ADD) {
-        console.log("adding user", actionClientId);
         setDoc(doc(clientsConfigRef, actionClientId), DEFAULT_USER_CONFIG);
       } else if (clientAction === ClientAction.PAID) {
         updateDoc(

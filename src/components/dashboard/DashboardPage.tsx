@@ -66,7 +66,6 @@ const DashboardPage: FC<DashboardProps> = ({ user }) => {
   }, [user, db]);
   const clientsConfigRef = useMemo(() => {
     if (user && ADMIN_USERS.includes(user.email ?? "")) {
-      console.log("client ref", db);
       return collection(db, "clients") as CollectionReference<ClientConfig>;
     }
     return undefined;

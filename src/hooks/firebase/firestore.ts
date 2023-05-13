@@ -43,9 +43,6 @@ export function useCollectionSnapshot<DocumentData>(
       collectionReference,
       (snap) => {
         setCollectionSnap(snap);
-        snap.forEach((doc) => {
-          console.log("Client", doc.id);
-        });
       },
       firestoreErrorHandler
     );
