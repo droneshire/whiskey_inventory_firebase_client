@@ -50,7 +50,7 @@ export const HealthMonitorTab: FC<{
       </Typography>
       <Box sx={{ display: "flex", flexDirection: "column" }}>
         <Chip
-          sx={{ width: "20%", alignSelf: "center" }}
+          sx={{ width: "20%", alignSelf: "center", marginBottom: 4 }}
           label={heartbeatString}
           color={heartbeatColor}
         />
