@@ -13,7 +13,7 @@ import { HealthMonitorConfig } from "types/health_monitor";
 
 const timeBetweenHeartbeatSeconds: number = 60 * 70;
 
-export const HealthMonitorTab: FC<{
+export const BackendTab: FC<{
   clientsSnapshot: QuerySnapshot<ClientConfig>;
   clientsConfigRef: CollectionReference<ClientConfig>;
   healthMonitorSnapshot: DocumentSnapshot<HealthMonitorConfig>;
@@ -59,4 +59,4 @@ export const HealthMonitorTab: FC<{
   );
 };
 
-export default HealthMonitorTab;
+export default BackendTab;

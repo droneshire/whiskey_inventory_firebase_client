@@ -1,5 +1,5 @@
 import ClientsTab from "./ClientsTab";
-import HealthMonitorTab from "./HealthMonitorTab";
+import BackendTab from "./BackendTab";
 
 const adminTabsList = [
   {
@@ -10,7 +10,7 @@ const adminTabsList = [
   {
     key: "health_monitor",
     label: "Backend",
-    component: HealthMonitorTab,
+    component: BackendTab,
   },
 ];
 
