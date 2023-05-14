@@ -1,13 +1,16 @@
-import { FC, useState, useEffect, useMemo } from "react";
+import { FC, useState, useEffect, useCallback } from "react";
 
-import { Typography, Box, Chip } from "@mui/material";
+import { Typography, Box, Chip, Button } from "@mui/material";
 
 import {
   QuerySnapshot,
   DocumentSnapshot,
   CollectionReference,
+  Timestamp,
 } from "firebase/firestore";
 
+import { useAsyncAction } from "hooks/async";
+import { updateDoc } from "firebase/firestore";
 import { ClientConfig } from "types/user";
 import { HealthMonitorConfig } from "types/health_monitor";
 
@@ -26,6 +29,16 @@ export const BackendTab: FC<{
   const [heartbeatSeconds, setHeartbeatSeconds] = useState<number>(
     heartbeat?.seconds ?? timeBetweenHeartbeatSeconds + 1
   );
+  const [buttonDisabled, setButtonDisabled] = useState<boolean>(false);
+
+  const {
+    runAction: update,
+    running: updating,
+    error: updateError,
+    clearError,
+  } = useAsyncAction((value: boolean) =>
+    updateDoc(healthMonitorSnapshot.ref, "reset", value)
+  );
 
   useEffect(() => {
     if (heartbeat) {
@@ -41,7 +54,26 @@ export const BackendTab: FC<{
       }
       setHeartbeatSeconds(newHeartbeat);
     }
-  }, [heartbeat, heartbeatSeconds, timeBetweenHeartbeatSeconds]);
+  }, [
+    buttonDisabled,
+    heartbeat,
+    heartbeatSeconds,
+    timeBetweenHeartbeatSeconds,
+  ]);
+
+  useEffect(() => {
+    if (buttonDisabled) {
+      updateDoc(
+        healthMonitorSnapshot.ref,
+        "heartbeat",
+        Timestamp.fromDate(new Date(2022, 1, 1))
+      );
+      updateDoc(healthMonitorSnapshot.ref, "reset", true);
+      setTimeout(() => {
+        setButtonDisabled(false);
+      }, 20000);
+    }
+  }, [buttonDisabled]);
 
   return (
     <>
@@ -54,6 +86,16 @@ export const BackendTab: FC<{
           label={heartbeatString}
           color={heartbeatColor}
         />
+        <Button
+          variant="contained"
+          disabled={buttonDisabled}
+          onClick={() => {
+            setButtonDisabled(true);
+          }}
+          sx={{ width: "20%", alignSelf: "center" }}
+        >
+          Restart Backend
+        </Button>
       </Box>
     </>
   );
