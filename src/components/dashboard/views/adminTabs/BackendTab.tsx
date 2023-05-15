@@ -51,9 +51,6 @@ export const BackendTab: FC<{
     if (!reset) {
       setButtonDisabled(false);
     }
-  }, [reset]);
-
-  useEffect(() => {
     if (buttonDisabled) {
       updateDoc(
         healthMonitorSnapshot.ref,
@@ -63,9 +60,9 @@ export const BackendTab: FC<{
       updateDoc(healthMonitorSnapshot.ref, "reset", true);
       setTimeout(() => {
         setButtonDisabled(false);
-      }, 20000);
+      }, 10000);
     }
-  }, [buttonDisabled, healthMonitorSnapshot.ref]);
+  }, [reset, buttonDisabled, healthMonitorSnapshot.ref]);
 
   return (
     <>
