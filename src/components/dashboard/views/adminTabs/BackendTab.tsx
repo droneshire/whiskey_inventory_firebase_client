@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from "react";
+import { FC, useState, useEffect, useMemo } from "react";
 
 import { Typography, Box, Chip, Button } from "@mui/material";
 
@@ -21,7 +21,7 @@ export const BackendTab: FC<{
   healthMonitorSnapshot: DocumentSnapshot<HealthMonitorConfig>;
 }> = ({ healthMonitorSnapshot }) => {
   const heartbeat = healthMonitorSnapshot?.get("heartbeat");
-  const reset = healthMonitorSnapshot?.get("reset");
+  const reset = healthMonitorSnapshot?.get("reset") ?? false;
   const [heartbeatString, setHeartbeatString] = useState<string>("Offline");
   const [heartbeatColor, setHeartbeatColor] = useState<"success" | "error">(
     "error"
@@ -35,7 +35,6 @@ export const BackendTab: FC<{
     if (heartbeat) {
       const now: number = Math.floor(Date.now() / 1000);
       const newHeartbeat: number = heartbeat?.seconds ?? heartbeatSeconds;
-      console.log(now, newHeartbeat, heartbeatSeconds, now - heartbeatSeconds);
       if (now - heartbeatSeconds > timeBetweenHeartbeatSeconds) {
         setHeartbeatString("Offline");
         setHeartbeatColor("error");
@@ -46,23 +45,6 @@ export const BackendTab: FC<{
       setHeartbeatSeconds(newHeartbeat);
     }
   }, [buttonDisabled, heartbeat, heartbeatSeconds]);
-
-  useEffect(() => {
-    if (!reset) {
-      setButtonDisabled(false);
-    }
-    if (buttonDisabled) {
-      updateDoc(
-        healthMonitorSnapshot.ref,
-        "heartbeat",
-        Timestamp.fromDate(new Date(2022, 1, 1))
-      );
-      updateDoc(healthMonitorSnapshot.ref, "reset", true);
-      setTimeout(() => {
-        setButtonDisabled(false);
-      }, 10000);
-    }
-  }, [reset, buttonDisabled, healthMonitorSnapshot.ref]);
 
   return (
     <>
@@ -79,7 +61,17 @@ export const BackendTab: FC<{
           variant="contained"
           disabled={buttonDisabled}
           onClick={() => {
+            console.log("Restarting Backend");
+            updateDoc(
+              healthMonitorSnapshot.ref,
+              "heartbeat",
+              Timestamp.fromDate(new Date(2022, 1, 1))
+            );
+            updateDoc(healthMonitorSnapshot.ref, "reset", true);
             setButtonDisabled(true);
+            setTimeout(() => {
+              setButtonDisabled(false);
+            }, 10000);
           }}
           sx={{ width: "20%", alignSelf: "center" }}
         >
