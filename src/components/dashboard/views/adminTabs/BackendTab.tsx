@@ -1,4 +1,4 @@
-import { FC, useState, useEffect, useCallback } from "react";
+import { FC, useState, useEffect } from "react";
 
 import { Typography, Box, Chip, Button } from "@mui/material";
 
@@ -9,7 +9,6 @@ import {
   Timestamp,
 } from "firebase/firestore";
 
-import { useAsyncAction } from "hooks/async";
 import { updateDoc } from "firebase/firestore";
 import { ClientConfig } from "types/user";
 import { HealthMonitorConfig } from "types/health_monitor";
@@ -22,6 +21,7 @@ export const BackendTab: FC<{
   healthMonitorSnapshot: DocumentSnapshot<HealthMonitorConfig>;
 }> = ({ healthMonitorSnapshot }) => {
   const heartbeat = healthMonitorSnapshot?.get("heartbeat");
+  const reset = healthMonitorSnapshot?.get("reset");
   const [heartbeatString, setHeartbeatString] = useState<string>("Offline");
   const [heartbeatColor, setHeartbeatColor] = useState<"success" | "error">(
     "error"
@@ -30,15 +30,6 @@ export const BackendTab: FC<{
     heartbeat?.seconds ?? timeBetweenHeartbeatSeconds + 1
   );
   const [buttonDisabled, setButtonDisabled] = useState<boolean>(false);
-
-  const {
-    runAction: update,
-    running: updating,
-    error: updateError,
-    clearError,
-  } = useAsyncAction((value: boolean) =>
-    updateDoc(healthMonitorSnapshot.ref, "reset", value)
-  );
 
   useEffect(() => {
     if (heartbeat) {
@@ -54,12 +45,13 @@ export const BackendTab: FC<{
       }
       setHeartbeatSeconds(newHeartbeat);
     }
-  }, [
-    buttonDisabled,
-    heartbeat,
-    heartbeatSeconds,
-    timeBetweenHeartbeatSeconds,
-  ]);
+  }, [buttonDisabled, heartbeat, heartbeatSeconds]);
+
+  useEffect(() => {
+    if (!reset) {
+      setButtonDisabled(false);
+    }
+  }, [reset]);
 
   useEffect(() => {
     if (buttonDisabled) {
@@ -73,7 +65,7 @@ export const BackendTab: FC<{
         setButtonDisabled(false);
       }, 20000);
     }
-  }, [buttonDisabled]);
+  }, [buttonDisabled, healthMonitorSnapshot.ref]);
 
   return (
     <>
