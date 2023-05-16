@@ -1,4 +1,4 @@
-import { FC, useState, useEffect, useMemo } from "react";
+import { FC, useState, useEffect } from "react";
 
 import { Typography, Box, Chip, Button } from "@mui/material";
 
@@ -21,7 +21,6 @@ export const BackendTab: FC<{
   healthMonitorSnapshot: DocumentSnapshot<HealthMonitorConfig>;
 }> = ({ healthMonitorSnapshot }) => {
   const heartbeat = healthMonitorSnapshot?.get("heartbeat");
-  const reset = healthMonitorSnapshot?.get("reset") ?? false;
   const [heartbeatString, setHeartbeatString] = useState<string>("Offline");
   const [heartbeatColor, setHeartbeatColor] = useState<"success" | "error">(
     "error"

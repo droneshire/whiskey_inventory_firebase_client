@@ -1,4 +1,3 @@
-import { Timestamp } from "firebase/firestore";
 
 export enum ItemAction {
   TRACKING = "TRACKING",
@@ -23,6 +22,7 @@ export interface Inventory {
     };
   };
   inventoryChange: number;
+  minHoursSinceOutOfStock: number;
 }
 
 export interface AlertTimeZone {
@@ -66,6 +66,7 @@ export const DEFAULT_USER_CONFIG = {
   inventory: {
     items: {},
     inventoryChange: 1,
+    minHoursSinceOutOfStock: 0,
   },
   accounting: {
     hasPaid: false,

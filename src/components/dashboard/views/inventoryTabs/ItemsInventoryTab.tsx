@@ -15,6 +15,7 @@ import {
   Snackbar,
   Alert,
   TableRow,
+  Checkbox,
   TableCell,
   TableContainer,
   TableBody,
@@ -67,8 +68,17 @@ interface ItemActionOption {
 
 type ItemProps = ItemSpec & {
   actionButtons: ItemActionOption[];
+  selectedItems: string[];
+  toggleItemSelection: (itemId: string) => void;
 };
-const Item: FC<ItemProps> = ({ itemId, name, available, actionButtons }) => {
+const Item: FC<ItemProps> = ({
+  name,
+  itemId,
+  available,
+  actionButtons,
+  selectedItems,
+  toggleItemSelection,
+}) => {
   const [actionMenuAnchorEl, setActionMenuAnchorEl] =
     React.useState<null | HTMLElement>(null);
   const actionMenuOpen = Boolean(actionMenuAnchorEl);
@@ -82,7 +92,20 @@ const Item: FC<ItemProps> = ({ itemId, name, available, actionButtons }) => {
     <TableRow hover>
       <TableCell>
         <Tooltip title={`Item ${itemId}`}>
-          <Chip icon={<LocalBarIcon />} label={itemId} variant="outlined" />
+          {(selectedItems.includes(itemId) && (
+            <Chip
+              icon={<LocalBarIcon />}
+              label={itemId}
+              onClick={() => toggleItemSelection(itemId)}
+            />
+          )) || (
+            <Chip
+              icon={<LocalBarIcon />}
+              label={itemId}
+              variant="outlined"
+              onClick={() => toggleItemSelection(itemId)}
+            />
+          )}
         </Tooltip>
       </TableCell>
       <TableCell>{name}</TableCell>
@@ -110,6 +133,55 @@ const Item: FC<ItemProps> = ({ itemId, name, available, actionButtons }) => {
   );
 };
 
+const TableDisplayButtons: FC<{
+  items: ItemSpec[];
+  visibleItems: number;
+  setVisibleItems: (visibleItems: number) => void;
+  incrementalVisibleItems: number;
+}> = ({ items, visibleItems, setVisibleItems, incrementalVisibleItems }) => {
+  return items.length > 0 && items.length > incrementalVisibleItems ? (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+      }}
+    >
+      <Button
+        onClick={() => {
+          setVisibleItems(incrementalVisibleItems);
+        }}
+        disabled={visibleItems <= incrementalVisibleItems}
+      >
+        Show Min
+      </Button>
+      <Button
+        onClick={() => {
+          setVisibleItems(visibleItems + incrementalVisibleItems);
+        }}
+        disabled={visibleItems > items.length}
+      >
+        Show More
+      </Button>
+
+      <Button
+        onClick={() => {
+          setVisibleItems(visibleItems - incrementalVisibleItems);
+        }}
+        disabled={visibleItems <= incrementalVisibleItems}
+      >
+        Show Less
+      </Button>
+      <Button
+        onClick={() => {
+          setVisibleItems(items.length);
+        }}
+      >
+        Show All
+      </Button>
+    </div>
+  ) : null;
+};
+
 interface ItemGroupActionButton {
   doAction: (itemId: string) => void;
   ActionIcon: React.ElementType;
@@ -120,11 +192,90 @@ const ItemActivityGroup: FC<{
   items: ItemSpec[];
   actionButtons: ItemGroupActionButton[];
 }> = ({ items, actionButtons }) => {
+  const incrementalVisibleItems = 10;
+  const [visibleItems, setVisibleItems] = useState(incrementalVisibleItems);
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const displayedItems = items.slice(0, visibleItems);
+  const [actionMenuAnchorEl, setActionMenuAnchorEl] =
+    React.useState<null | HTMLElement>(null);
+  const actionMenuOpen = Boolean(actionMenuAnchorEl);
+  const handleActionMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    setActionMenuAnchorEl(event.currentTarget);
+  };
+  const handleActionMenuClose = () => {
+    setActionMenuAnchorEl(null);
+  };
+
+  const toggleAllItems = useCallback(() => {
+    if (selectedItems.length === items.length) {
+      setSelectedItems([]);
+    } else {
+      setSelectedItems(items.map((item) => item.itemId));
+    }
+  }, [items, selectedItems]);
+
+  const toggleItemSelection = (itemId: string) => {
+    setSelectedItems((prevSelectedItems) => {
+      if (prevSelectedItems.includes(itemId)) {
+        return prevSelectedItems.filter((id) => id !== itemId);
+      } else {
+        return [...prevSelectedItems, itemId];
+      }
+    });
+  };
+
   return (
     <TableContainer component={Paper} variant="outlined">
       <Table>
         <TableBody>
-          {items.map((props) => (
+          <TableRow sx={{ marginLeft: "1rem" }}>
+            <TableCell>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={
+                      selectedItems.length === items.length && items.length > 0
+                    }
+                    indeterminate={
+                      selectedItems.length > 0 &&
+                      selectedItems.length < items.length
+                    }
+                    onChange={toggleAllItems}
+                  />
+                }
+                label="Select All/None"
+              />
+            </TableCell>
+            <TableCell></TableCell>
+            <TableCell></TableCell>
+            <TableCell sx={{ textAlign: "right" }}>
+              <Button onClick={handleActionMenuClick}>Actions</Button>
+              <Menu
+                anchorEl={actionMenuAnchorEl}
+                open={actionMenuOpen}
+                onClose={handleActionMenuClose}
+              >
+                {actionButtons.map(({ doAction, ActionIcon, title }, index) => (
+                  <MenuItem
+                    key={index}
+                    onClick={() => {
+                      selectedItems.forEach((itemId) => {
+                        doAction(itemId);
+                      });
+                    }}
+                  >
+                    {ActionIcon && (
+                      <ListItemIcon>
+                        <ActionIcon fontSize="small" />
+                      </ListItemIcon>
+                    )}
+                    <ListItemText>{title("")}</ListItemText>
+                  </MenuItem>
+                ))}
+              </Menu>
+            </TableCell>
+          </TableRow>
+          {displayedItems.map((props) => (
             <Item
               key={props.itemId}
               {...props}
@@ -135,10 +286,15 @@ const ItemActivityGroup: FC<{
                   ActionIcon: ActionIcon,
                 })
               )}
+              toggleItemSelection={toggleItemSelection}
+              selectedItems={selectedItems}
             />
           ))}
         </TableBody>
       </Table>
+      <TableDisplayButtons
+        {...{ items, visibleItems, setVisibleItems, incrementalVisibleItems }}
+      />
     </TableContainer>
   );
 };
@@ -385,6 +541,28 @@ const ItemsInventoryTab: FC<{
               {
                 value: 10,
                 label: "10",
+              },
+            ]}
+            sx={{ maxWidth: 300 }}
+          />
+        </FormGroup>
+        <FormGroup sx={{ p: 2 }}>
+          <Typography gutterBottom>Min Hours Since Out of Stock</Typography>
+          <FirestoreBackedSlider
+            disabled={updatingAnything}
+            docSnap={userConfigSnapshot!}
+            min={0}
+            max={48}
+            fieldPath="inventory.minHoursSinceOutOfStock"
+            valueLabelDisplay="auto"
+            marks={[
+              {
+                value: 0,
+                label: "0",
+              },
+              {
+                value: 48,
+                label: "48",
               },
             ]}
             sx={{ maxWidth: 300 }}
