@@ -175,6 +175,7 @@ const TableDisplayButtons: FC<{
         onClick={() => {
           setVisibleItems(items.length);
         }}
+        disabled={visibleItems == items.length}
       >
         Show All
       </Button>
