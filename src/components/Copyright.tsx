@@ -1,5 +1,5 @@
-import React, { FC } from "react";
-import { Typography, Link } from "@mui/material";
+import { FC } from "react";
+import { Typography } from "@mui/material";
 
 const Copyright: FC<any> = (props: any) => {
   return (
@@ -9,7 +9,7 @@ const Copyright: FC<any> = (props: any) => {
       align="center"
       {...props}
     >
-      {"Copyright © Joshua Tilton "}
+      {"Copyright © Signal Three Consulting Inc. "}
       {new Date().getFullYear()}
       {"."}
     </Typography>
