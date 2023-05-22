@@ -22,9 +22,7 @@ export const BackendTab: FC<{
 }> = ({ healthMonitorSnapshot }) => {
   const heartbeat = healthMonitorSnapshot?.get("heartbeat");
   const [heartbeatString, setHeartbeatString] = useState<string>("Offline");
-  const [heartbeatColor, setHeartbeatColor] = useState<"success" | "error">(
-    "error"
-  );
+  const [heartbeatColor, setHeartbeatColor] = useState<"red" | "grey">("grey");
   const [heartbeatSeconds, setHeartbeatSeconds] = useState<number>(
     heartbeat?.seconds ?? timeBetweenHeartbeatSeconds + 1
   );
@@ -36,10 +34,10 @@ export const BackendTab: FC<{
       const newHeartbeat: number = heartbeat?.seconds ?? heartbeatSeconds;
       if (now - heartbeatSeconds > timeBetweenHeartbeatSeconds) {
         setHeartbeatString("Offline");
-        setHeartbeatColor("error");
+        setHeartbeatColor("grey");
       } else {
         setHeartbeatString("Online");
-        setHeartbeatColor("success");
+        setHeartbeatColor("red");
       }
       setHeartbeatSeconds(newHeartbeat);
     }
@@ -52,9 +50,14 @@ export const BackendTab: FC<{
       </Typography>
       <Box sx={{ display: "flex", flexDirection: "column" }}>
         <Chip
-          sx={{ width: "20%", alignSelf: "center", marginBottom: 4 }}
+          sx={{
+            width: "20%",
+            alignSelf: "center",
+            marginBottom: 4,
+            color: "white",
+            backgroundColor: heartbeatColor,
+          }}
           label={heartbeatString}
-          color={heartbeatColor}
         />
         <Button
           variant="contained"
