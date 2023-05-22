@@ -229,53 +229,58 @@ const ItemActivityGroup: FC<{
     <TableContainer component={Paper} variant="outlined">
       <Table>
         <TableBody>
-          <TableRow sx={{ marginLeft: "1rem" }}>
-            <TableCell>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={
-                      selectedItems.length === items.length && items.length > 0
-                    }
-                    indeterminate={
-                      selectedItems.length > 0 &&
-                      selectedItems.length < items.length
-                    }
-                    onChange={toggleAllItems}
-                  />
-                }
-                label="Select All/None"
-              />
-            </TableCell>
-            <TableCell></TableCell>
-            <TableCell></TableCell>
-            <TableCell sx={{ textAlign: "right" }}>
-              <Button onClick={handleActionMenuClick}>Actions</Button>
-              <Menu
-                anchorEl={actionMenuAnchorEl}
-                open={actionMenuOpen}
-                onClose={handleActionMenuClose}
-              >
-                {actionButtons.map(({ doAction, ActionIcon, title }, index) => (
-                  <MenuItem
-                    key={index}
-                    onClick={() => {
-                      selectedItems.forEach((itemId) => {
-                        doAction(itemId);
-                      });
-                    }}
-                  >
-                    {ActionIcon && (
-                      <ListItemIcon>
-                        <ActionIcon fontSize="small" />
-                      </ListItemIcon>
-                    )}
-                    <ListItemText>{title("")}</ListItemText>
-                  </MenuItem>
-                ))}
-              </Menu>
-            </TableCell>
-          </TableRow>
+          {items.length > 0 && (
+            <TableRow sx={{ marginLeft: "1rem" }}>
+              <TableCell>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={
+                        selectedItems.length === items.length &&
+                        items.length > 0
+                      }
+                      indeterminate={
+                        selectedItems.length > 0 &&
+                        selectedItems.length < items.length
+                      }
+                      onChange={toggleAllItems}
+                    />
+                  }
+                  label="Select All/None"
+                />
+              </TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+              <TableCell sx={{ textAlign: "right" }}>
+                <Button onClick={handleActionMenuClick}>Actions</Button>
+                <Menu
+                  anchorEl={actionMenuAnchorEl}
+                  open={actionMenuOpen}
+                  onClose={handleActionMenuClose}
+                >
+                  {actionButtons.map(
+                    ({ doAction, ActionIcon, title }, index) => (
+                      <MenuItem
+                        key={index}
+                        onClick={() => {
+                          selectedItems.forEach((itemId) => {
+                            doAction(itemId);
+                          });
+                        }}
+                      >
+                        {ActionIcon && (
+                          <ListItemIcon>
+                            <ActionIcon fontSize="small" />
+                          </ListItemIcon>
+                        )}
+                        <ListItemText>{title("")}</ListItemText>
+                      </MenuItem>
+                    )
+                  )}
+                </Menu>
+              </TableCell>
+            </TableRow>
+          )}
           {displayedItems.map((props) => (
             <Item
               key={props.itemId}
