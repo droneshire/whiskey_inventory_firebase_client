@@ -16,24 +16,31 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import GoogleIcon from "@mui/icons-material/Google";
-
-import { useAuthStateWatcher } from "hooks/firebase/auth";
 import Copyright from "components/Copyright";
+import EmailIcon from "@mui/icons-material/Email";
+import GoogleIcon from "@mui/icons-material/Google";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+
+import {
+  useAuthStateWatcher,
+  logInWithEmailAndPassword,
+  registerWithEmailAndPassword,
+} from "hooks/firebase/auth";
+import EmailLoginModal from "./login/EmailLogin";
+import { DEFAULT_USER_CONFIG } from "types/user";
+
+interface LoginButtonProps extends ChipProps {
+  clickHandler: () => void;
+}
+const LoginButton: FC<LoginButtonProps> = ({ clickHandler, ...props }) => (
+  <Chip onClick={clickHandler} {...props} />
+);
 
 const signIn = async (providerFactory: () => AuthProvider) => {
   await signInWithPopup(getAuth(), providerFactory());
 };
-
-interface LoginButtonProps extends ChipProps {
-  providerFactory: () => AuthProvider;
-}
-const LoginButton: FC<LoginButtonProps> = ({ providerFactory, ...props }) => (
-  <Chip onClick={() => signIn(providerFactory)} {...props} />
-);
-
 const LoginPage: React.FC = () => {
+  const [openModal, setOpenModal] = React.useState(false);
   const location = useLocation();
   const user = useAuthStateWatcher();
 
@@ -62,12 +69,33 @@ const LoginPage: React.FC = () => {
         <Box sx={{ mt: 3 }}>
           <Stack direction="row" spacing={2}>
             <LoginButton
-              providerFactory={() => new GoogleAuthProvider()}
+              clickHandler={() => signIn(() => new GoogleAuthProvider())}
               icon={<GoogleIcon />}
               label="Google"
             />
+            <LoginButton
+              clickHandler={() => setOpenModal(true)}
+              icon={<EmailIcon />}
+              label="Email"
+            />
           </Stack>
         </Box>
+        <EmailLoginModal
+          open={openModal}
+          onClose={() => setOpenModal(false)}
+          onLogin={(email, password) =>
+            logInWithEmailAndPassword({ email: email, password: password })
+          }
+          onRegister={(email, password) =>
+            registerWithEmailAndPassword({
+              email: email,
+              password: password,
+              name: email,
+              collection_name: "clients",
+              default_config: DEFAULT_USER_CONFIG,
+            })
+          }
+        />
       </Box>
       <Copyright sx={{ mt: 5 }} />
     </Container>
