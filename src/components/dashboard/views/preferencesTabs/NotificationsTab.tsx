@@ -2,11 +2,14 @@ import React, { FC } from "react";
 import { DocumentSnapshot } from "firebase/firestore";
 import phone from "phone";
 import {
+  Chip,
   Typography,
   FormGroup,
   FormControlLabel,
   Divider,
 } from "@mui/material";
+import PaidIcon from "@mui/icons-material/Paid";
+import DoNotDisturbOnIcon from "@mui/icons-material/DoNotDisturbOn";
 
 import { ClientConfig } from "types/user";
 import {
@@ -26,8 +29,30 @@ const NotificationsTab: FC<{
   const windowAlertsEnabled = userConfigSnapshot?.get(
     "preferences.notifications.sms.alertWindowEnabled"
   );
+  const hasPaid = userConfigSnapshot?.get("accounting.hasPaid");
   return (
     <>
+      <Typography variant="h6" gutterBottom>
+        Account Status
+      </Typography>
+      <FormGroup>
+        <Chip
+          label={hasPaid ? "Active" : "Inactive"}
+          icon={
+            hasPaid ? (
+              <PaidIcon style={{ color: "white" }} />
+            ) : (
+              <DoNotDisturbOnIcon style={{ color: "white" }} />
+            )
+          }
+          sx={{
+            maxWidth: 100,
+            color: "white",
+            backgroundColor: hasPaid ? "red" : "grey",
+          }}
+        />
+      </FormGroup>
+      <Divider sx={{ marginTop: 2, marginBottom: 4 }} />
       <Typography variant="h6" gutterBottom>
         Email
       </Typography>

@@ -27,7 +27,6 @@ import {
   registerWithEmailAndPassword,
 } from "hooks/firebase/auth";
 import EmailLoginModal from "./login/EmailLogin";
-import { DEFAULT_USER_CONFIG } from "types/user";
 
 interface LoginButtonProps extends ChipProps {
   clickHandler: () => void;
@@ -90,9 +89,6 @@ const LoginPage: React.FC = () => {
             registerWithEmailAndPassword({
               email: email,
               password: password,
-              name: email,
-              collection_name: "clients",
-              default_config: DEFAULT_USER_CONFIG,
             })
           }
         />

@@ -8,6 +8,7 @@ import {
   DialogTitle,
   TextField,
 } from "@mui/material";
+import { Link } from "react-router-dom";
 
 interface LoginModalProps {
   open: boolean;
@@ -67,6 +68,7 @@ const EmailLoginModal: React.FC<LoginModalProps> = ({
           value={password}
           onChange={handlePasswordChange}
         />
+        <Link to="/forgot-password">Forgot Password?</Link>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleLogin}>Login</Button>
