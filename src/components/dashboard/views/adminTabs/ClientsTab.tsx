@@ -237,12 +237,12 @@ const NewClientModal: FC<ClientModalProps> = ({
             New Client
           </Typography>
           <TextField
-            label="Client ID"
+            label="Client Email"
             variant="standard"
             value={userId}
             onChange={(e) => setuserId(e.target.value)}
             error={!validuserId}
-            inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+            inputProps={{ inputMode: "email" }}
           />
           <Box textAlign="center">
             {creatingClient ? (
