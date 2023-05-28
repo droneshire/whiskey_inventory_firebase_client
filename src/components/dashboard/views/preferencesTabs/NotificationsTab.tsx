@@ -95,7 +95,7 @@ const NotificationsTab: FC<{
           variant="standard"
           isValid={(phoneNumber) => !phoneNumber || phone(phoneNumber).isValid}
           helperText={(phoneNumber, validPhone) =>
-            validPhone ? "" : "Invalid phone number"
+            validPhone ? "" : "Invalid phone number:" + phoneNumber
           }
           sx={{ maxWidth: 300 }}
           InputProps={{ inputComponent: PhoneNumberInput as any }}

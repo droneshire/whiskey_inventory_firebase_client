@@ -240,7 +240,7 @@ const NewClientModal: FC<ClientModalProps> = ({
             label="Client Email"
             variant="standard"
             value={userId}
-            onChange={(e) => setuserId(e.target.value)}
+            onChange={(e) => setuserId(e.target.value.toLowerCase())}
             error={!validuserId}
             inputProps={{ inputMode: "email" }}
           />
