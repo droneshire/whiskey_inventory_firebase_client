@@ -15,7 +15,6 @@ export enum ClientAction {
 export interface Inventory {
   items: {
     [id: string]: {
-      // The current action for the team to perform
       action: ItemAction;
       name: string;
       available: number;
