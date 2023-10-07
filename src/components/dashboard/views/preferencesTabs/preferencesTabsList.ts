@@ -1,5 +1,6 @@
+import AccountStatusTab from "./AccountStatus";
 import NotificationsTab from "./NotificationsTab";
-// import OtherPreferencesTab from "./OtherPreferences";
+import PreferencesTab from "./PreferencesTab";
 
 const preferencesTabsList = [
   {
@@ -7,7 +8,16 @@ const preferencesTabsList = [
     label: "Notifications",
     component: NotificationsTab,
   },
-  // { key: "other", label: "Other", component: OtherPreferencesTab },
+  {
+    key: "preferences",
+    label: "Preferences",
+    component: PreferencesTab
+  },
+  {
+    key: "accountStatus",
+    label: "Account Status",
+    component: AccountStatusTab,
+  },
 ];
 
 export default preferencesTabsList;

@@ -33,6 +33,7 @@ export interface AlertTimeZone {
 }
 
 export interface Preferences {
+  updateOnNewData: boolean;
   notifications: {
     sms: {
       phoneNumber: string;
@@ -74,6 +75,7 @@ export const DEFAULT_USER_CONFIG = {
     nextBillingAmount: 0.0,
   },
   preferences: {
+    updateOnNewData: true,
     notifications: {
       email: { email: "", updatesEnabled: true },
       sms: {
