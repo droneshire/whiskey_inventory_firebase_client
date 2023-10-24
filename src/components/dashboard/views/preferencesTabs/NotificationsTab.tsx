@@ -1,12 +1,23 @@
-import React, { FC } from "react";
-import { DocumentSnapshot } from "firebase/firestore";
+import React, { FC, useState } from "react";
+import {
+  deleteField,
+  DocumentSnapshot,
+  FieldPath,
+  updateDoc,
+} from "firebase/firestore";
 import phone from "phone";
 import {
   Typography,
   FormGroup,
   FormControlLabel,
   Divider,
+  IconButton,
+  InputAdornment,
+  Fab,
+  Tooltip,
 } from "@mui/material";
+import AddIcCallIcon from "@mui/icons-material/AddIcCall";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
 import { ClientConfig } from "types/user";
 import {
@@ -21,6 +32,29 @@ const NotificationsTab: FC<{
   userConfigSnapshot: DocumentSnapshot<ClientConfig>;
 }> = ({ userConfigSnapshot }) => {
   const updatingAnything = !!userConfigSnapshot?.metadata.fromCache;
+  const [phoneNumbers, setPhoneNumbers] = useState([{ id: 1 }]);
+
+  const handleAddPhone = () => {
+    setPhoneNumbers([...phoneNumbers, { id: phoneNumbers.length + 1 }]);
+  };
+
+  const handleDeletePhone = (id: number) => {
+    setPhoneNumbers(
+      phoneNumbers.filter((phoneNumber) => phoneNumber.id !== id)
+    );
+    updateDoc(
+      userConfigSnapshot.ref,
+      new FieldPath(
+        "preferences",
+        "notifications",
+        "sms",
+        "phoneNumbers",
+        id.toString()
+      ),
+      deleteField()
+    );
+  };
+
   return (
     <>
       <Typography variant="h6" gutterBottom>
@@ -56,32 +90,63 @@ const NotificationsTab: FC<{
       <Typography variant="h6" gutterBottom>
         SMS
       </Typography>
-      <FormGroup>
-        <FirestoreBackedTextField
-          label="Phone number"
-          disabled={updatingAnything}
-          docSnap={userConfigSnapshot!}
-          fieldPath="preferences.notifications.sms.phoneNumber"
-          variant="standard"
-          isValid={(phoneNumber) => !phoneNumber || phone(phoneNumber).isValid}
-          helperText={(phoneNumber, validPhone) =>
-            validPhone ? "" : "Invalid phone number:" + phoneNumber
-          }
-          sx={{ maxWidth: 300 }}
-          InputProps={{ inputComponent: PhoneNumberInput as any }}
-        />
-        <FormControlLabel
-          control={
-            <FirestoreBackedSwitch
+      <div style={{ position: "relative" }}>
+        <FormGroup>
+          {phoneNumbers.map((phoneId, index) => (
+            <FirestoreBackedTextField
+              key={phoneId.id}
+              label="Phone number"
               disabled={updatingAnything}
               docSnap={userConfigSnapshot!}
-              fieldPath="preferences.notifications.sms.updatesEnabled"
-              checkBox
+              fieldPath={`preferences.notifications.sms.phoneNumbers.${index.toString()}`}
+              variant="standard"
+              isValid={(phoneNumber) =>
+                !phoneNumber || phone(phoneNumber).isValid
+              }
+              helperText={(phoneNumber, validPhone) =>
+                validPhone ? "" : "Invalid phone number:" + phoneNumber
+              }
+              sx={{ maxWidth: 300 }}
+              InputProps={{
+                inputComponent: PhoneNumberInput as any,
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      edge="end"
+                      onClick={() => handleDeletePhone(phoneId.id)}
+                    >
+                      <DeleteForeverIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
-          }
-          label="SMS updates"
-        />
-      </FormGroup>
+          ))}
+          <FormControlLabel
+            control={
+              <FirestoreBackedSwitch
+                disabled={updatingAnything}
+                docSnap={userConfigSnapshot!}
+                fieldPath="preferences.notifications.sms.updatesEnabled"
+                checkBox
+              />
+            }
+            label="SMS updates"
+          />
+        </FormGroup>
+        <Tooltip title="Add phone number">
+          <span>
+            <Fab
+              color="primary"
+              aria-label="add"
+              onClick={handleAddPhone}
+              style={{ position: "absolute", bottom: "16px", right: "16px" }}
+            >
+              <AddIcCallIcon />
+            </Fab>
+          </span>
+        </Tooltip>
+      </div>
     </>
   );
 };
