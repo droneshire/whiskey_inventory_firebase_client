@@ -18,7 +18,7 @@ import {
 const InventoryUploaderTab: FC<{
   userConfigSnapshot: DocumentSnapshot<ClientConfig>;
 }> = ({ userConfigSnapshot }) => {
-  const [isTracking, setIsTracking] = useState(false);
+  const [isTracking, setIsTracking] = useState(true);
   const onUpload = (inventoryItems: InventoryItem[]) => {
     const createItem = (ItemProps: ItemSpec) => {
       const { itemId, ...item } = ItemProps;
