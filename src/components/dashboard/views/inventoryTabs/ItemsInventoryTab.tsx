@@ -196,6 +196,7 @@ const ItemActivityGroup: FC<{
   const incrementalVisibleItems = 10;
   const [visibleItems, setVisibleItems] = useState(incrementalVisibleItems);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [isProcessing, setIsProcessing] = useState(false);
   const displayedItems = items.slice(0, visibleItems);
   const [actionMenuAnchorEl, setActionMenuAnchorEl] =
     React.useState<null | HTMLElement>(null);
@@ -258,25 +259,35 @@ const ItemActivityGroup: FC<{
                   open={actionMenuOpen}
                   onClose={handleActionMenuClose}
                 >
-                  {actionButtons.map(
-                    ({ doAction, ActionIcon, title }, index) => (
-                      <MenuItem
-                        key={index}
-                        onClick={() => {
-                          selectedItems.forEach((itemId) => {
-                            doAction(itemId);
-                          });
-                        }}
-                      >
-                        {ActionIcon && (
-                          <ListItemIcon>
-                            <ActionIcon fontSize="small" />
-                          </ListItemIcon>
-                        )}
-                        <ListItemText>{title("")}</ListItemText>
-                      </MenuItem>
-                    )
-                  )}
+                  <div>
+                    {isProcessing ? (
+                      <CircularProgress />
+                    ) : (
+                      actionButtons.map(
+                        ({ doAction, ActionIcon, title }, index) => (
+                          <MenuItem
+                            key={index}
+                            onClick={() => {
+                              setIsProcessing(true); // Start processing
+
+                              selectedItems.forEach((itemId) => {
+                                doAction(itemId);
+                              });
+
+                              setIsProcessing(false); // End processing
+                            }}
+                          >
+                            {ActionIcon && (
+                              <ListItemIcon>
+                                <ActionIcon fontSize="small" />
+                              </ListItemIcon>
+                            )}
+                            <ListItemText>{title("")}</ListItemText>
+                          </MenuItem>
+                        )
+                      )
+                    )}
+                  </div>
                 </Menu>
               </TableCell>
             </TableRow>
