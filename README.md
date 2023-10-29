@@ -2,7 +2,8 @@
 
 React based website backed by Firebase database to manage the clients and their inventory monitoring settings.
 
-![logo](https://user-images.githubusercontent.com/2355438/235367406-de28a385-98d8-4d11-9438-df73ea5da651.png)
+![_f799a25c-d6a2-4fd5-a31a-1b63bfe4763c](https://github.com/droneshire/whiskey_inventory_firebase_client/assets/2355438/14b59f6a-f542-4764-ba3a-c095024ce535)
+
 
 The server side is located at: https://github.com/droneshire/whiskey_inventory_alert_upwork
 
