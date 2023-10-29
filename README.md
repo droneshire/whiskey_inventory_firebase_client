@@ -92,38 +92,6 @@ export interface ClientConfig {
   accounting: Accounting;
 }
 
-export const DEFAULT_USER_CONFIG = {
-  inventory: {
-    items: {},
-    inventoryChange: 1,
-    minHoursSinceOutOfStock: 0,
-  },
-  accounting: {
-    hasPaid: false,
-    plan: "",
-    nextBillingDate: "",
-    nextBillingAmount: 0.0,
-  },
-  preferences: {
-    updateOnNewData: true,
-    notifications: {
-      email: { email: "", updatesEnabled: true },
-      sms: {
-        phoneNumbers: {},
-        updatesEnabled: true,
-        alertTimeZone: {
-          abbrev: "PDT",
-          altName: "Pacific Daylight Time",
-          label: "(GMT-07:00) Pacific Time",
-          offset: -7,
-          value: "America/Los_Angeles",
-        },
-        alertTimeRange: [],
-        alertWindowEnabled: false,
-      },
-    },
-  },
-}
 
 ```
 
