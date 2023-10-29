@@ -49,7 +49,10 @@ const InventoryUploader: React.FC<InventoryUploaderProps> = ({ onUpload }) => {
       .filter(Boolean);
 
     // Convert array of string IDs to array of InventoryItem
-    const parsedInventoryItems: InventoryItem[] = ids.map((idStr) => {
+    // filter out to make sure it is a 5 character string and that it is a number
+    const checkedIds = ids.filter((id) => id.length === 5 && !isNaN(+id));
+
+    const parsedInventoryItems: InventoryItem[] = checkedIds.map((idStr) => {
       return { id: idStr }; // Retain the IDs as strings
     });
 
