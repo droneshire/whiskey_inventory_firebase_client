@@ -270,11 +270,14 @@ const ItemActivityGroup: FC<{
                             onClick={() => {
                               setIsProcessing(true); // Start processing
 
-                              selectedItems.forEach((itemId) => {
-                                doAction(itemId);
-                              });
+                              // Defer the execution
+                              setTimeout(() => {
+                                selectedItems.forEach((itemId) => {
+                                  doAction(itemId);
+                                });
 
-                              setIsProcessing(false); // End processing
+                                setIsProcessing(false); // End processing
+                              }, 0);
                             }}
                           >
                             {ActionIcon && (
