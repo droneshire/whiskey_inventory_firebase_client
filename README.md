@@ -24,6 +24,7 @@ The dashboard contains several views, one of which is an admin only view:
 
 ### Client
 ```
+
 export enum ItemAction {
   TRACKING = "TRACKING",
   UNTRACKED = "UNTRACKED",
@@ -40,13 +41,13 @@ export enum ClientAction {
 export interface Inventory {
   items: {
     [id: string]: {
-      // The current action for the team to perform
       action: ItemAction;
       name: string;
       available: number;
     };
   };
   inventoryChange: number;
+  minHoursSinceOutOfStock: number;
 }
 
 export interface AlertTimeZone {
@@ -58,9 +59,14 @@ export interface AlertTimeZone {
 }
 
 export interface Preferences {
+  updateOnNewData: boolean;
   notifications: {
     sms: {
-      phoneNumber: string;
+      phoneNumbers: {
+        [id: string]: {
+          phoneNumber: string;
+        };
+      }
       updatesEnabled: boolean;
       alertTimeRange: number[];
       alertTimeZone: AlertTimeZone;
@@ -85,6 +91,40 @@ export interface ClientConfig {
   preferences: Preferences;
   accounting: Accounting;
 }
+
+export const DEFAULT_USER_CONFIG = {
+  inventory: {
+    items: {},
+    inventoryChange: 1,
+    minHoursSinceOutOfStock: 0,
+  },
+  accounting: {
+    hasPaid: false,
+    plan: "",
+    nextBillingDate: "",
+    nextBillingAmount: 0.0,
+  },
+  preferences: {
+    updateOnNewData: true,
+    notifications: {
+      email: { email: "", updatesEnabled: true },
+      sms: {
+        phoneNumbers: {},
+        updatesEnabled: true,
+        alertTimeZone: {
+          abbrev: "PDT",
+          altName: "Pacific Daylight Time",
+          label: "(GMT-07:00) Pacific Time",
+          offset: -7,
+          value: "America/Los_Angeles",
+        },
+        alertTimeRange: [],
+        alertWindowEnabled: false,
+      },
+    },
+  },
+}
+
 ```
 
 # Future Work
