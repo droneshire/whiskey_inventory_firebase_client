@@ -36,7 +36,11 @@ export interface Preferences {
   updateOnNewData: boolean;
   notifications: {
     sms: {
-      phoneNumber: string;
+      phoneNumbers: {
+        [id: string]: {
+          phoneNumber: string;
+        };
+      }
       updatesEnabled: boolean;
       alertTimeRange: number[];
       alertTimeZone: AlertTimeZone;
@@ -79,7 +83,7 @@ export const DEFAULT_USER_CONFIG = {
     notifications: {
       email: { email: "", updatesEnabled: true },
       sms: {
-        phoneNumber: "",
+        phoneNumbers: {},
         updatesEnabled: true,
         alertTimeZone: {
           abbrev: "PDT",

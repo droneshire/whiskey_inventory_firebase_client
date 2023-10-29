@@ -181,7 +181,7 @@ export function FirestoreBackedTimeRangeField<DocType extends object>({
     if (!updating && previousUpdating) {
       setInputValue(backedValue);
     }
-  }, [updating, previousUpdating, backedValue]);
+  }, [updating, previousUpdating, backedValue, setInputValue]);
 
   return (
     <>
@@ -394,7 +394,7 @@ export function FirestoreBackedTimeZoneSelect<DocType extends object>({
     if (!updating) {
       setValue(savedValue);
     }
-  }, [savedValue, updating]);
+  }, [savedValue, updating, setValue]);
 
   return (
     <>
