@@ -2,7 +2,7 @@
 # https://github.com/firebase/firebase-tools
 
 name: Deploy to Firebase Hosting on merge
-'on':
+"on":
   push:
     branches:
       - main
@@ -11,10 +11,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: npm ci && npm run build
+      - run: |
+          touch .env
+          echo REACT_APP_FIREBASE_API_KEY='${{ secrets.REACT_APP_FIREBASE_API_KEY }}' >> .env
+          echo REACT_APP_FIREBASE_PROJECT_ID='${{ secrets.REACT_APP_FIREBASE_PROJECT_ID }}' >> .env
+          echo REACT_APP_FIREBASE_SENDER_ID='${{ secrets.REACT_APP_FIREBASE_SENDER_ID }}' >> .env
+          echo REACT_APP_FIREBASE_APP_ID='${{ secrets.REACT_APP_FIREBASE_APP_ID }}' >> .env
+          echo REACT_APP_FIREBASE_MEASUREMENT_ID='${{ secrets.REACT_APP_FIREBASE_MEASUREMENT_ID }}' >> .env
+          echo REACT_APP_ADMIN_USERS='${{ secrets.REACT_APP_ADMIN_USERS }}' >> .env
+          cat .env
+          npm ci &&
+          npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_INVENTORY_860F0 }}'
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_INVENTORY_860F0 }}"
           channelId: live
           projectId: inventory-860f0
