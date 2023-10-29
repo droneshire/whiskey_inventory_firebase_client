@@ -8,9 +8,7 @@ import adminTabsList from "./adminTabs/adminTabsList";
 
 const AdminView: FC = () => {
   const {
-    user,
     userConfigSnapshot,
-    userConfigRef,
     clientsSnapshot,
     clientsConfigRef,
     healthMonitorSnapshot,

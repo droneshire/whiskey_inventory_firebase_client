@@ -21,6 +21,6 @@ export function useAsyncAction<T, P>(action: (value: T) => P | void) {
     } finally {
       setRunning(false);
     }
-  }, []);
+  }, [action, running]);
   return { runAction: wrappedAction, running, error, clearError };
 }

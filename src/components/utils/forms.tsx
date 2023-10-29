@@ -381,13 +381,8 @@ export function FirestoreBackedTimeZoneSelect<DocType extends object>({
   const savedValue =
     docSnap.get(fieldPath) ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
   const [value, setValue] = useState(savedValue);
-  const {
-    runAction: update,
-    running: updating,
-    error,
-    clearError,
-  } = useAsyncAction((enabled: number) =>
-    updateDoc(docSnap.ref, fieldPath, enabled)
+  const { runAction: update, running: updating } = useAsyncAction(
+    (enabled: number) => updateDoc(docSnap.ref, fieldPath, enabled)
   );
 
   useEffect(() => {

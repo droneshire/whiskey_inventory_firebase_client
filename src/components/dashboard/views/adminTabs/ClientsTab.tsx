@@ -378,7 +378,7 @@ const ClientsTab: FC<{
         onClose={() => setModalOpen(false)}
         existinguserIds={existinguserIds}
         createClient={(ClientProps) => {
-          const { userId, ...users } = ClientProps;
+          const { userId } = ClientProps;
           setActionClientId(userId);
           setClientAction(ClientAction.ADD);
         }}
