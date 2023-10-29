@@ -28,14 +28,31 @@ import {
 } from "components/utils/forms";
 import { isValidEmail } from "utils/validators";
 
+interface PhoneNumber {
+  id: number;
+  phoneNumber: string;
+}
 const NotificationsTab: FC<{
   userConfigSnapshot: DocumentSnapshot<ClientConfig>;
 }> = ({ userConfigSnapshot }) => {
   const updatingAnything = !!userConfigSnapshot?.metadata.fromCache;
-  const [phoneNumbers, setPhoneNumbers] = useState([{ id: 1 }]);
+  const backedPhoneNumbers =
+    userConfigSnapshot?.data()?.preferences?.notifications?.sms?.phoneNumbers ||
+    {};
+
+  // Convert the dictionary of phone numbers to an array of PhoneNumber objects
+  const [phoneNumbers, setPhoneNumbers] = useState<PhoneNumber[]>(
+    Object.entries(backedPhoneNumbers).map(([key, value]) => ({
+      id: parseInt(key, 10),
+      phoneNumber: (value as { phoneNumber: string }).phoneNumber,
+    }))
+  );
 
   const handleAddPhone = () => {
-    setPhoneNumbers([...phoneNumbers, { id: phoneNumbers.length + 1 }]);
+    setPhoneNumbers([
+      ...phoneNumbers,
+      { id: phoneNumbers.length + 1, phoneNumber: "" },
+    ]);
   };
 
   const handleDeletePhone = (id: number) => {
@@ -98,7 +115,7 @@ const NotificationsTab: FC<{
               label="Phone number"
               disabled={updatingAnything}
               docSnap={userConfigSnapshot!}
-              fieldPath={`preferences.notifications.sms.phoneNumbers.${index.toString()}`}
+              fieldPath={`preferences.notifications.sms.phoneNumbers.${phoneId.id.toString()}`}
               variant="standard"
               isValid={(phoneNumber) =>
                 !phoneNumber || phone(phoneNumber).isValid
