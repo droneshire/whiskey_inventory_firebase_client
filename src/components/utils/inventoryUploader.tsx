@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Button } from "@mui/material";
 
 export interface InventoryItem {
   id: string;
@@ -66,7 +67,15 @@ const InventoryUploader: React.FC<InventoryUploaderProps> = ({ onUpload }) => {
 
   return (
     <div>
-      <input type="file" onChange={handleFileChange} ref={fileInputRef} />
+      <Button variant="contained" component="label">
+        Upload File
+        <input
+          type="file"
+          onChange={handleFileChange}
+          ref={fileInputRef}
+          hidden
+        />
+      </Button>
       {/* Display the parsed IDs */}
       <ul>
         {inventoryItems.map((item, index) => (
