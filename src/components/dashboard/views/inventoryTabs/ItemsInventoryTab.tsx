@@ -56,7 +56,7 @@ const TrackingIcon: FC<Omit<FontAwesomeIconProps, "icon">> = (props) => (
   <FontAwesomeIcon icon={faChartSimple} {...props} />
 );
 
-type ItemSpec = Inventory["items"][string] & {
+export type ItemSpec = Inventory["items"][string] & {
   itemId: string;
 };
 

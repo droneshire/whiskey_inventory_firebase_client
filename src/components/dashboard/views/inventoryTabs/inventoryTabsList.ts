@@ -1,4 +1,5 @@
 import ItemsInventoryTab from "./ItemsInventoryTab";
+import InventoryUploaderTab from "./InventoryUploaderTab";
 
 const inventoryTabsList = [
   {
@@ -6,6 +7,11 @@ const inventoryTabsList = [
     label: "Inventory",
     component: ItemsInventoryTab,
   },
+  {
+    key: "uploader",
+    label: "Uploader",
+    component: InventoryUploaderTab,
+  }
 ];
 
 export default inventoryTabsList;
