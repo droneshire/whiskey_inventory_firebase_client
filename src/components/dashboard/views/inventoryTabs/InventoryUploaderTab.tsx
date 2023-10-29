@@ -56,7 +56,7 @@ const InventoryUploaderTab: FC<{
             onChange={(e: any) => setIsTracking(e.target.checked)}
           />
         }
-        label="Track items after upload"
+        label="Track uploaded items"
       />
       <FormGroup>
         <InventoryUploader onUpload={onUpload}></InventoryUploader>
