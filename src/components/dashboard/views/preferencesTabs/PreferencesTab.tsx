@@ -6,6 +6,7 @@ import {
   FormControlLabel,
   Divider,
   Tooltip,
+  Box,
 } from "@mui/material";
 
 import { ClientConfig } from "types/user";
@@ -24,25 +25,62 @@ const NotificationsTab: FC<{
   return (
     <>
       <Typography variant="h6" gutterBottom>
-        Alert Selections
+        New Item Alerts
       </Typography>
-      <FormGroup>
-        <Tooltip title="Alerts you when previously unlisted items are added to the database.">
-          <span>
+      <Box
+        display="flex"
+        flexDirection="row"
+        alignItems="center"
+        // justifyContent="space-between"
+      >
+        <FormGroup>
+          <Tooltip title="Alerts you when previously unlisted items are added to the database.">
             <FormControlLabel
               control={
                 <FirestoreBackedSwitch
                   disabled={updatingAnything}
                   docSnap={userConfigSnapshot!}
                   fieldPath="preferences.updateOnNewData"
-                  checkBox
+                  checkBox={true}
                 />
               }
               label="Alerts With New Items"
             />
-          </span>
-        </Tooltip>
-      </FormGroup>
+          </Tooltip>
+        </FormGroup>
+        <Box display={"flex"} flexDirection={"column"} marginLeft={30}>
+          <FormGroup>
+            <Tooltip title="Alerts you when previously unlisted items are added to the database.">
+              <FormControlLabel
+                control={
+                  <FirestoreBackedSwitch
+                    disabled={updatingAnything}
+                    docSnap={userConfigSnapshot!}
+                    fieldPath="preferences.enableNewDataSmsAlerts"
+                    checkBox={false}
+                  />
+                }
+                label="Email"
+              />
+            </Tooltip>
+          </FormGroup>
+          <FormGroup>
+            <Tooltip title="Alerts you when previously unlisted items are added to the database.">
+              <FormControlLabel
+                control={
+                  <FirestoreBackedSwitch
+                    disabled={updatingAnything}
+                    docSnap={userConfigSnapshot!}
+                    fieldPath="preferences.enableNewDataEmailAlerts"
+                    checkBox={false}
+                  />
+                }
+                label="SMS"
+              />
+            </Tooltip>
+          </FormGroup>
+        </Box>
+      </Box>
       <Divider sx={{ marginTop: 2, marginBottom: 4 }} />
       <Tooltip title="Forces SMS alsert to be sent within the specified time window.">
         <span>

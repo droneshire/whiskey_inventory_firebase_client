@@ -34,6 +34,8 @@ export interface AlertTimeZone {
 
 export interface Preferences {
   updateOnNewData: boolean;
+  enableNewDataEmailAlerts: boolean;
+  enableNewDataSmsAlerts: boolean;
   notifications: {
     sms: {
       phoneNumbers: {
@@ -80,11 +82,13 @@ export const DEFAULT_USER_CONFIG = {
   },
   preferences: {
     updateOnNewData: true,
+    enableNewDataEmailAlerts: true,
+    enableNewDataSmsAlerts: false,
     notifications: {
       email: { email: "", updatesEnabled: true },
       sms: {
         phoneNumbers: {},
-        updatesEnabled: true,
+        updatesEnabled: false,
         alertTimeZone: {
           abbrev: "PDT",
           altName: "Pacific Daylight Time",
