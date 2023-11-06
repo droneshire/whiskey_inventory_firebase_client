@@ -22,6 +22,10 @@ const NotificationsTab: FC<{
   const windowAlertsEnabled = userConfigSnapshot?.get(
     "preferences.notifications.sms.alertWindowEnabled"
   );
+  const updateOnNewDataEnabled = userConfigSnapshot?.get(
+    "preferences.updateOnNewData"
+  );
+  const disableAlertTypes = updatingAnything || !updateOnNewDataEnabled;
   return (
     <>
       <Typography variant="h6" gutterBottom>
@@ -50,11 +54,11 @@ const NotificationsTab: FC<{
         </FormGroup>
         <Box display={"flex"} flexDirection={"column"} marginLeft={30}>
           <FormGroup>
-            <Tooltip title="Alerts you when previously unlisted items are added to the database.">
+            <Tooltip title="Sends an sms message when previously unlisted items are added to the database.">
               <FormControlLabel
                 control={
                   <FirestoreBackedSwitch
-                    disabled={updatingAnything}
+                    disabled={disableAlertTypes}
                     docSnap={userConfigSnapshot!}
                     fieldPath="preferences.enableNewDataSmsAlerts"
                     checkBox={false}
@@ -65,11 +69,11 @@ const NotificationsTab: FC<{
             </Tooltip>
           </FormGroup>
           <FormGroup>
-            <Tooltip title="Alerts you when previously unlisted items are added to the database.">
+            <Tooltip title="Sends an email when previously unlisted items are added to the database.">
               <FormControlLabel
                 control={
                   <FirestoreBackedSwitch
-                    disabled={updatingAnything}
+                    disabled={disableAlertTypes}
                     docSnap={userConfigSnapshot!}
                     fieldPath="preferences.enableNewDataEmailAlerts"
                     checkBox={false}
